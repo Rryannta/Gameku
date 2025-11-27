@@ -1,0 +1,232 @@
+body {
+  font-family: "Inter", sans-serif !important;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  background-color: rgb(16, 16, 20) !important;
+  height: 100vh;
+}
+
+/* NAVBAR START */
+.navbar {
+  /* background-color: #121212; Warna dasar navbar */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative; /* Agar z-index bekerja dengan baik */
+  z-index: 1000;
+
+  a {
+    text-decoration: none;
+  }
+
+  &.custom {
+    padding: 20px 40px;
+  }
+
+  /* --- BAGIAN KIRI --- */
+  .left {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+
+    .left-nav {
+      display: flex;
+      align-items: center;
+      gap: 30px;
+
+      /* LOGO & MEGA MENU TRIGGER */
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 8px; /* Jarak antar teks dan panah */
+        position: relative; /* WAJIB: Agar menu nempel di sini */
+        height: 50px; /* Area hover lebih nyaman */
+        cursor: pointer;
+
+        /* Style Teks Logo */
+        .logo-nav {
+          font-size: 30px;
+          font-weight: 600;
+          color: #fff;
+          font-family: "Bebas Neue", cursive;
+          letter-spacing: 1px;
+          transition: color 0.3s;
+        }
+
+        /* Style Panah Kecil */
+        i {
+          color: #ccc;
+          font-size: 12px;
+          margin-top: 4px; /* Penyesuaian posisi visual */
+          transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Animasi membal */
+        }
+
+        /* --- LOGIC HOVER (Saat Mouse Masuk) --- */
+        &:hover {
+          .logo-nav {
+            color: #fff;
+          } /* Pastikan tetap putih */
+
+          /* Putar Panah */
+          i {
+            transform: rotate(180deg);
+            color: #fff;
+          }
+
+          /* Munculkan Mega Menu */
+          .mega-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(
+              15px
+            ); /* Geser sedikit ke bawah posisi finalnya */
+          }
+        }
+
+        /* --- TAMPILAN MEGA MENU (YANG KEREN) --- */
+        .mega-menu {
+          position: absolute;
+          top: 80%; /* Muncul dari bawah logo */
+          left: -20px;
+          width: 520px; /* Lebar ideal */
+
+          /* Desain Kartu Dark Modern */
+          background-color: #202020;
+          border: 1px solid #333; /* Border tipis elegan */
+          border-radius: 12px;
+          padding: 30px;
+
+          /* Shadow Besar biar melayang */
+          box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+
+          /* Layout Grid 2 Kolom */
+          display: grid;
+          grid-template-columns: 0.8fr 1.2fr; /* Kiri kecil, Kanan besar */
+          gap: 30px;
+
+          /* State Awal (Tersembunyi) */
+          opacity: 0;
+          visibility: hidden;
+          transform: translateY(25px); /* Mulai dari agak bawah */
+          transition: all 0.25s ease-out; /* Animasi smooth */
+          z-index: 999;
+          cursor: default; /* Reset kursor */
+
+          /* Reset Font Isi Menu (Biar gak pake Bebas Neue) */
+          font-family: "Inter", sans-serif;
+
+          /* Garis Pemisah Vertikal */
+          .menu-col.left-col {
+            border-right: 1px solid #383838;
+            padding-right: 20px;
+          }
+
+          /* Style Judul Section (Play, Discover, Create) */
+          .menu-section {
+            /* margin-bottom: 25px; */
+
+            h4 {
+              color: #fff;
+              font-size: 13px;
+              text-transform: uppercase;
+              letter-spacing: 0.05em;
+              margin-bottom: 15px;
+              opacity: 0.6; /* Agak redup biar elegan */
+            }
+
+            /* List Link */
+            ul {
+              list-style: none;
+              padding: 0;
+
+              li {
+                margin-bottom: 10px;
+
+                .right-text {
+                  font-size: 18px;
+                }
+
+                a {
+                  color: #b0b0b0; /* Abu-abu terang */
+                  font-size: 15px;
+                  font-weight: 500;
+                  display: flex;
+                  align-items: center;
+                  gap: 12px;
+                  transition: all 0.2s;
+
+                  /* Icon di dalam menu */
+                  i {
+                    font-size: 18px;
+                    color: #b0b0b0;
+                    margin-top: 0; /* Reset margin panah logo */
+                    transition: none; /* Hapus animasi putar */
+                  }
+
+                  /* Efek Hover Link */
+                  &:hover {
+                    color: #fff;
+                    transform: translateX(
+                      5px
+                    ); /* Geser kanan dikit saat hover */
+
+                    i {
+                      color: #fff;
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+      /* END LOGO */
+
+      .item {
+        color: #fff;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 30px;
+        font-family: "Bebas Neue", cursive;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        /* margin-left: 10px; Jarak dari Logo */
+      }
+    }
+
+    .nav-menu {
+      .nav-list {
+        list-style: none;
+        display: flex;
+        align-items: center;
+        gap: 30px;
+        margin-bottom: 0px;
+        padding-left: 0px;
+
+        .nav-item {
+          color: #ccc;
+          cursor: pointer;
+          font-size: 15px;
+          transition: color 0.2s;
+
+          &:hover {
+            color: #fff;
+          }
+        }
+      }
+    }
+  }
+
+  .right {
+    .nav-icon-link i {
+      font-size: 20px;
+      color: #ccc;
+      cursor: pointer;
+      transition: color 0.2s;
+      &:hover {
+        color: #fff;
+      }
+    }
+  }
+}
