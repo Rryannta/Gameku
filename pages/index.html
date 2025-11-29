@@ -35,6 +35,12 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
     />
+
+    <!-- swiper -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
+    />
   </head>
   <body>
     <!-- navbar -->
@@ -48,76 +54,25 @@
             <div class="mega-menu">
               <div class="menu-col left-col">
                 <div class="menu-section">
-                  <h4>Play</h4>
-                  <ul>
-                    <li>
-                      <a href="#"><i class="bi bi-controller"></i> Fortnite</a>
-                    </li>
-                    <li>
-                      <a href="#"
-                        ><i class="bi bi-rocket-takeoff"></i> Rocket League</a
-                      >
-                    </li>
-                    <li>
-                      <a href="#"
-                        ><i class="bi bi-emoji-smile"></i> Fall Guys</a
-                      >
-                    </li>
+                  <h4>Platform</h4>
+                  <ul id="platformList">
+                    <li>Loading...</li>
                   </ul>
                 </div>
+
                 <div class="menu-section">
-                  <h4>Discover</h4>
-                  <ul>
-                    <li>
-                      <a href="#"
-                        ><i class="bi bi-shop"></i> Epic Games Store</a
-                      >
-                    </li>
-                    <li>
-                      <a href="#"><i class="bi bi-box-seam"></i> Fab</a>
-                    </li>
-                    <li>
-                      <a href="#"><i class="bi bi-boxes"></i> Sketchfab</a>
-                    </li>
+                  <h4>Popular Genres</h4>
+                  <ul id="genreList">
+                    <li>Loading...</li>
                   </ul>
                 </div>
               </div>
 
               <div class="menu-col right-col">
                 <div class="menu-section">
-                  <h4>Create</h4>
-                  <ul>
-                    <li>
-                      <a class="right-text" href="#"
-                        ><i class="bi bi-unity"></i> Unreal Engine</a
-                      >
-                    </li>
-                    <li>
-                      <a href="#" class="right-text"
-                        ><i class="bi bi-pencil-square"></i> Create in
-                        Fortnite</a
-                      >
-                    </li>
-                    <li>
-                      <a href="#" class="right-text"
-                        ><i class="bi bi-person-bounding-box"></i> MetaHuman</a
-                      >
-                    </li>
-                    <li>
-                      <a href="#" class="right-text"
-                        ><i class="bi bi-building"></i> Twinmotion</a
-                      >
-                    </li>
-                    <li>
-                      <a href="#" class="right-text"
-                        ><i class="bi bi-camera"></i> RealityScan</a
-                      >
-                    </li>
-                    <li>
-                      <a href="#" class="right-text"
-                        ><i class="bi bi-globe"></i> Epic Online Services</a
-                      >
-                    </li>
+                  <h4>Top Publishers</h4>
+                  <ul id="publisherList">
+                    <li>Loading...</li>
                   </ul>
                 </div>
               </div>
@@ -142,10 +97,92 @@
       </div>
     </nav>
 
+    <!-- main -->
+    <main class="main container">
+      <div class="store-header">
+        <div class="store-search">
+          <i class="bi bi-search"></i>
+          <input type="text" id="globalSearch" placeholder="Search store" />
+
+          <div class="search-results-dropdown" id="searchDropdown"></div>
+        </div>
+
+        <div class="store-nav-links">
+          <a href="#" class="nav-tab active" data-target="view-discover"
+            >Discover</a
+          >
+          <a href="#" class="nav-tab" data-target="view-browse">Browse</a>
+          <a href="#" class="nav-tab" data-target="view-news">News</a>
+        </div>
+      </div>
+
+      <section id="view-discover" class="page-section active">
+        <div class="hero-carousel">
+          <div class="hero-stage" id="heroStage">
+            <div class="hero-bg" id="heroBg"></div>
+
+            <div class="hero-content">
+              <div class="hero-text">
+                <h2 id="heroTitle">Loading...</h2>
+                <p id="heroDesc">Please wait...</p>
+
+                <div class="hero-buttons">
+                  <button class="btn-primary">Learn More</button>
+                  <button class="btn-secondary">
+                    <i class="bi bi-plus-circle"></i> Add to Wishlist
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="hero-sidebar">
+            <ul id="heroList"></ul>
+          </div>
+        </div>
+
+        <div class="game-swiper-section">
+          <div class="section-header-row">
+            <h3>Something New</h3>
+            <div class="swiper-nav-btns">
+              <button class="nav-btn-prev">
+                <i class="bi bi-chevron-left"></i>
+              </button>
+              <button class="nav-btn-next">
+                <i class="bi bi-chevron-right"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="swiper myGameSwiper">
+            <div class="swiper-wrapper" id="swiperWrapper"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="view-browse" class="page-section hidden">
+        <div class="browse-header">
+          <h2>Browse Games</h2>
+          <div id="popularGenresGrid" class="genre-grid"></div>
+        </div>
+        <div id="browseContainer" class="game-grid"></div>
+      </section>
+
+      <section id="view-news" class="page-section hidden">
+        <h2>Latest News</h2>
+      </section>
+    </main>
+
     <!-- script -->
     <script src="/js/api.js"></script>
-    <script src="/js/main.js"></script>
+    <script src="/js/components/navbar.js"></script>
+    <script src="/js/components/router.js"></script>
+    <script src="/js/page/main.js"></script>
+    <script src="/js/page/browse.js"></script>
+    <script src="/js/utils.js"></script>
     <!-- bootstrap -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- swiper -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
   </body>
 </html>

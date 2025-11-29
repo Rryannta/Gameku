@@ -7,6 +7,15 @@ body {
   height: 100vh;
 }
 
+body::-webkit-scrollbar {
+  display: none;
+}
+
+/* container */
+.container {
+  padding: 0px 100px 20px 100px !important;
+}
+
 /* NAVBAR START */
 .navbar {
   /* background-color: #121212; Warna dasar navbar */
@@ -39,147 +48,153 @@ body {
       .logo {
         display: flex;
         align-items: center;
-        gap: 8px; /* Jarak antar teks dan panah */
-        position: relative; /* WAJIB: Agar menu nempel di sini */
-        height: 50px; /* Area hover lebih nyaman */
+        gap: 8px;
+        position: relative; /* WAJIB */
+        height: 50px;
         cursor: pointer;
 
-        /* Style Teks Logo */
+        /* Style Teks Logo "GameKu" */
         .logo-nav {
           font-size: 30px;
           font-weight: 600;
           color: #fff;
           font-family: "Bebas Neue", cursive;
           letter-spacing: 1px;
-          transition: color 0.3s;
         }
 
         /* Style Panah Kecil */
         i {
           color: #ccc;
           font-size: 12px;
-          margin-top: 4px; /* Penyesuaian posisi visual */
-          transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Animasi membal */
+          margin-top: 4px;
+          transition: transform 0.2s ease-in-out;
         }
 
-        /* --- LOGIC HOVER (Saat Mouse Masuk) --- */
-        &:hover {
-          .logo-nav {
-            color: #fff;
-          } /* Pastikan tetap putih */
-
+        /* --- LOGIC HOVER --- */
+        &:hover,
+        &.active {
           /* Putar Panah */
           i {
             transform: rotate(180deg);
             color: #fff;
           }
-
-          /* Munculkan Mega Menu */
+          /* Munculkan Menu */
           .mega-menu {
             opacity: 1;
             visibility: visible;
-            transform: translateY(
-              15px
-            ); /* Geser sedikit ke bawah posisi finalnya */
+            transform: translateY(0);
           }
         }
 
-        /* --- TAMPILAN MEGA MENU (YANG KEREN) --- */
+        /* --- TAMPILAN MEGA MENU (PERSIS SCREENSHOT) --- */
         .mega-menu {
           position: absolute;
-          top: 80%; /* Muncul dari bawah logo */
+          top: 100%; /* Tepat dibawah logo */
           left: -20px;
-          width: 520px; /* Lebar ideal */
+          width: 610px;
 
-          /* Desain Kartu Dark Modern */
-          background-color: #202020;
-          border: 1px solid #333; /* Border tipis elegan */
+          /* Background gelap & Border tipis sesuai SS */
+          background-color: #18181c;
+          border: 1px solid #333;
           border-radius: 12px;
-          padding: 30px;
+          padding: 0; /* Padding kita atur di dalam kolom agar rapi */
 
-          /* Shadow Besar biar melayang */
-          box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+          /* Shadow */
+          box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
 
-          /* Layout Grid 2 Kolom */
+          /* Layout Grid */
           display: grid;
-          grid-template-columns: 0.8fr 1.2fr; /* Kiri kecil, Kanan besar */
-          gap: 30px;
+          grid-template-columns: 265px 1fr; /* Kolom kiri fix, kanan sisa */
 
-          /* State Awal (Tersembunyi) */
+          /* State Awal (Hidden) */
           opacity: 0;
           visibility: hidden;
-          transform: translateY(25px); /* Mulai dari agak bawah */
-          transition: all 0.25s ease-out; /* Animasi smooth */
+          transform: translateY(10px);
+          transition: all 0.2s ease-in-out;
           z-index: 999;
-          cursor: default; /* Reset kursor */
+          cursor: default;
 
-          /* Reset Font Isi Menu (Biar gak pake Bebas Neue) */
+          /* Reset Font agar tidak pakai Bebas Neue */
           font-family: "Inter", sans-serif;
 
-          /* Garis Pemisah Vertikal */
+          /* ---- PENGATURAN KOLOM & GARIS PEMISAH ---- */
+
+          /* Kolom Kiri */
           .menu-col.left-col {
-            border-right: 1px solid #383838;
-            padding-right: 20px;
+            border-right: 1px solid #333; /* Garis Vertikal Tengah */
+
+            /* Section "Play" (Atas) */
+            .menu-section:first-child {
+              padding: 40px 30px 40px 50px; /* Padding besar */
+              border-bottom: 1px solid #333; /* Garis Horizontal Play/Discover */
+            }
+
+            /* Section "Discover" (Bawah) */
+            .menu-section:last-child {
+              padding: 40px 30px 40px 50px;
+            }
           }
 
-          /* Style Judul Section (Play, Discover, Create) */
-          .menu-section {
-            /* margin-bottom: 25px; */
+          /* Kolom Kanan ("Create") */
+          .menu-col.right-col {
+            padding: 40px 30px 40px 50px;
+          }
 
+          /* ---- STYLING ISI MENU ---- */
+          .menu-section {
+            /* Judul Section (Play, Create, dll) */
             h4 {
-              color: #fff;
-              font-size: 13px;
-              text-transform: uppercase;
-              letter-spacing: 0.05em;
-              margin-bottom: 15px;
-              opacity: 0.6; /* Agak redup biar elegan */
+              color: #fff; /* Putih Terang */
+              font-size: 24px; /* Ukuran Besar */
+              font-weight: 700; /* Bold */
+              margin-bottom: 20px;
+              margin-top: 0;
             }
 
             /* List Link */
             ul {
               list-style: none;
               padding: 0;
+              margin: 0;
 
               li {
-                margin-bottom: 10px;
-
-                .right-text {
-                  font-size: 18px;
-                }
+                margin-bottom: 16px; /* Jarak antar item */
 
                 a {
-                  color: #b0b0b0; /* Abu-abu terang */
-                  font-size: 15px;
+                  color: #e0e0e0; /* Putih agak abu */
+                  font-size: 20px;
                   font-weight: 500;
                   display: flex;
                   align-items: center;
-                  gap: 12px;
-                  transition: all 0.2s;
+                  gap: 14px;
+                  transition: color 0.2s;
+                  text-decoration: none;
 
-                  /* Icon di dalam menu */
+                  /* Icon di samping teks */
                   i {
-                    font-size: 18px;
-                    color: #b0b0b0;
-                    margin-top: 0; /* Reset margin panah logo */
-                    transition: none; /* Hapus animasi putar */
+                    font-size: 20px; /* Icon agak besar */
+                    color: #fff;
+                    margin: 0;
+                    transition: none; /* Hapus animasi putar dari parent */
                   }
 
-                  /* Efek Hover Link */
+                  /* Hover Link Simpel */
                   &:hover {
                     color: #fff;
-                    transform: translateX(
-                      5px
-                    ); /* Geser kanan dikit saat hover */
-
-                    i {
-                      color: #fff;
-                    }
                   }
                 }
               }
             }
           }
         }
+      }
+
+      .menu-img-icon {
+        width: 24px;
+        height: 24px;
+        border-radius: 4px; /* Kotak dengan sudut tumpul */
+        object-fit: cover; /* Agar gambar tidak gepeng */
+        margin-right: 0; /* JS sudah mengatur gap di parent a */
       }
       /* END LOGO */
 
@@ -228,5 +243,615 @@ body {
         color: #fff;
       }
     }
+  }
+}
+
+/* main */
+.main {
+  /* --- STORE HEADER (Parent) --- */
+  .store-header {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+    padding: 20px 0px 10px 0px;
+
+    /* Sticky Position */
+    position: sticky;
+    top: 0;
+    background-color: rgb(16, 16, 20); /* Sesuaikan dgn bg body */
+    z-index: 900;
+    margin-bottom: 20px;
+
+    /* --- SEARCH BAR (Nested) --- */
+    .store-search {
+      position: relative; /* WAJIB: Agar dropdown nempel disini */
+      z-index: 1000;
+
+      display: flex;
+      align-items: center;
+      background-color: #202020;
+      padding: 8px 15px;
+      border-radius: 30px;
+      width: 240px;
+      transition: all 0.3s ease;
+
+      &:focus-within {
+        width: 280px;
+        background-color: #2a2a2a;
+        box-shadow: 0 0 0 1px #fff;
+      }
+
+      i {
+        color: #888;
+        font-size: 12px;
+        margin-right: 12px;
+      }
+
+      input {
+        background: transparent;
+        border: none;
+        color: #fff;
+        font-size: 12px;
+        width: 100%;
+        outline: none;
+
+        &::placeholder {
+          color: #888;
+        }
+      }
+
+      /* DROPDOWN HASIL (Bersarang di dalam .store-search) */
+      .search-results-dropdown {
+        position: absolute;
+        top: 120%; /* Jarak dari input */
+        left: 0;
+        width: 400px;
+        background-color: #18181c; /* Background agak gelap */
+        border: 1px solid #333; /* Border tipis */
+        border-radius: 14px;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+        padding: 20px;
+        z-index: 9999; /* Pastikan paling atas */
+        display: none; /* Default hidden, dimunculkan JS */
+
+        .dropdown-label {
+          font-size: 11px;
+          font-weight: 700;
+          text-transform: uppercase;
+          color: #888;
+          margin-bottom: 15px;
+          display: block;
+        }
+
+        .search-result-item {
+          display: flex;
+          align-items: center;
+          gap: 15px;
+          padding: 10px;
+          border-radius: 8px;
+          cursor: pointer;
+          transition: background 0.2s;
+          text-decoration: none;
+
+          &:hover {
+            background-color: #333;
+          }
+
+          img {
+            width: 40px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 4px;
+          }
+
+          .item-info {
+            display: flex;
+            flex-direction: column;
+
+            .item-type {
+              font-size: 10px;
+              color: #aaa;
+              text-transform: uppercase;
+            }
+
+            .item-title {
+              font-size: 14px;
+              color: #fff;
+              font-weight: 500;
+            }
+          }
+        }
+
+        .view-all-link {
+          display: block;
+          margin-top: 15px;
+          font-size: 13px;
+          color: #fff;
+          text-decoration: none;
+          font-weight: 600;
+          padding-top: 10px;
+          border-top: 1px solid #333;
+
+          i {
+            margin-left: 5px;
+            font-size: 12px;
+          }
+          &:hover {
+            text-decoration: underline;
+          }
+        }
+
+        /* SKELETON LOADING */
+        .skeleton-item {
+          display: flex;
+          align-items: center;
+          gap: 15px;
+          padding: 10px;
+          margin-bottom: 5px;
+
+          .sk-img {
+            width: 40px;
+            height: 50px;
+            background-color: #333;
+            border-radius: 4px;
+            animation: pulse 1.5s infinite;
+          }
+          .sk-text {
+            width: 150px;
+            height: 14px;
+            background-color: #333;
+            border-radius: 4px;
+            animation: pulse 1.5s infinite;
+          }
+        }
+      }
+    }
+
+    /* --- NAV LINKS --- */
+    .store-nav-links {
+      display: flex;
+      gap: 30px;
+
+      .nav-tab {
+        color: #aaa;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 500;
+        transition: color 0.2s;
+        position: relative;
+
+        &:hover {
+          color: #fff;
+        }
+        &.active {
+          color: #fff;
+          font-weight: 700;
+        }
+      }
+    }
+  }
+
+  .page-section {
+    display: none;
+    animation: fadeIn 0.4s ease;
+    /* --- HERO CAROUSEL --- */
+    .hero-carousel {
+      display: grid;
+      grid-template-columns: 4fr 1fr; /* Kiri 75%, Kanan 25% */
+      gap: 20px;
+      height: 500px; /* Tinggi Slider */
+      margin-bottom: 40px;
+
+      @media (max-width: 900px) {
+        grid-template-columns: 1fr; /* Mobile jadi 1 kolom */
+        height: auto;
+      }
+
+      /* --- LEFT STAGE --- */
+      .hero-stage {
+        position: relative;
+        border-radius: 16px;
+        overflow: hidden;
+        background-color: #202020;
+        cursor: pointer;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+
+        .hero-bg {
+          width: 100%;
+          height: 100%;
+          background-size: cover;
+          background-position: center;
+          transition: transform 0.5s ease; /* Zoom effect dikit saat ganti */
+        }
+
+        /* Gradient Overlay agar teks terbaca */
+        &::after {
+          content: "";
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          width: 100%;
+          height: 60%;
+          background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
+        }
+
+        .hero-content {
+          position: absolute;
+          bottom: 40px;
+          left: 40px;
+          z-index: 10;
+          max-width: 60%;
+
+          h2 {
+            font-size: 32px;
+            font-weight: 800;
+            margin-bottom: 10px;
+            color: #fff;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+          }
+
+          p {
+            color: #ddd;
+            font-size: 16px;
+            margin-bottom: 20px;
+            line-height: 1.5;
+            display: -webkit-box;
+            -webkit-line-clamp: 2; /* Batasi 2 baris */
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+          }
+
+          .hero-buttons {
+            display: flex;
+            gap: 15px;
+
+            button {
+              padding: 12px 24px;
+              border-radius: 8px;
+              border: none;
+              font-weight: 600;
+              cursor: pointer;
+              font-size: 14px;
+              transition: transform 0.2s;
+
+              &:hover {
+                transform: scale(1.05);
+              }
+            }
+
+            .btn-primary {
+              background-color: #fff;
+              color: #000;
+            }
+
+            .btn-secondary {
+              background-color: transparent;
+              color: #fff;
+              border: 1px solid rgba(255, 255, 255, 0.3);
+
+              &:hover {
+                background-color: rgba(255, 255, 255, 0.1);
+              }
+            }
+          }
+        }
+      }
+
+      /* --- RIGHT SIDEBAR --- */
+      .hero-sidebar {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        height: 100%;
+
+        @media (max-width: 900px) {
+          display: none; /* Hide sidebar di HP */
+        }
+
+        ul {
+          list-style: none;
+          padding: 0;
+          margin: 0;
+          display: flex;
+          flex-direction: column;
+          height: 100%;
+          justify-content: space-between; /* Sebar item merata */
+        }
+
+        /* ITEM LIST */
+        .hero-item {
+          display: flex;
+          align-items: center;
+          gap: 15px;
+          padding: 12px;
+          border-radius: 12px;
+          cursor: pointer;
+          background-color: transparent;
+          transition: background 0.3s;
+
+          /* Penting: relative agar ::before (progress bar) terkurung di sini */
+          position: relative;
+          overflow: hidden;
+
+          /* Agar Text & Gambar selalu di ATAS progress bar */
+          img,
+          span {
+            position: relative;
+            z-index: 2; /* Layer paling atas */
+          }
+
+          /* Thumbnail Kecil */
+          img {
+            width: 40px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 6px;
+          }
+
+          span {
+            font-size: 14px;
+            font-weight: 500;
+            color: #fff;
+          }
+
+          &:hover {
+            background-color: #2a2a2a;
+          }
+
+          /* --- ACTIVE STATE & ANIMASI --- */
+          &.active {
+            background-color: #2a2a2a;
+
+            /* Progress Bar Animation */
+            &::before {
+              content: "";
+              position: absolute;
+              left: 0;
+              top: 0;
+              height: 100%;
+
+              /* PERBAIKAN 1: Mulai dari lebar 0 */
+              width: 0%;
+
+              /* PERBAIKAN 2: Warna lebih terang (20%) atau Solid Abu-abu terang */
+              background-color: rgba(255, 255, 255, 0.2);
+              /* Atau pakai warna solid agar pasti kelihatan: */
+              /* background-color: #404040; */
+
+              z-index: 1; /* Di bawah teks (z-index 2), tapi diatas background */
+
+              /* Animasi 5 detik linear */
+              animation: progress 9s linear forwards;
+            }
+          }
+        }
+      }
+    }
+
+    /* --- SWIPER SECTION --- */
+    .game-swiper-section {
+      margin-top: 50px;
+      margin-bottom: 50px;
+
+      .section-header-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+
+        h3 {
+          color: #fff;
+          font-size: 20px;
+          font-weight: 700;
+        }
+
+        .swiper-nav-btns {
+          display: flex;
+          gap: 10px;
+
+          button {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: none;
+            background-color: #333;
+            color: #fff;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+
+            &:hover {
+              background-color: #555;
+            }
+          }
+        }
+      }
+    }
+
+    /* --- GAME CARD (SWIPER STYLE) --- */
+    .swiper-slide {
+      /* Agar card tidak gepeng */
+      height: auto;
+    }
+
+    .store-card {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      cursor: pointer;
+      group: hover; /* Untuk trigger hover parent */
+
+      /* 1. Bagian Gambar */
+      .card-image-wrap {
+        position: relative; /* Penting untuk tombol + */
+        border-radius: 8px;
+        overflow: hidden;
+        aspect-ratio: 3/4; /* Rasio Poster */
+
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          transition: filter 0.3s;
+        }
+
+        /* Tombol (+) Wishlist di pojok kanan atas */
+        .btn-wishlist-overlay {
+          position: absolute;
+          top: 10px;
+          right: 10px;
+          width: 32px;
+          height: 32px;
+          background-color: rgba(0, 0, 0, 0.6);
+          color: #fff;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 18px;
+
+          /* Default Hilang */
+          opacity: 0;
+          transform: translateY(-5px);
+          transition: all 0.2s ease;
+
+          &:hover {
+            background-color: #fff;
+            color: #000;
+          }
+        }
+      }
+
+      /* EFEK HOVER CARD */
+      &:hover {
+        .card-image-wrap img {
+          filter: brightness(1.1);
+        }
+
+        /* Munculkan tombol + saat card dihover */
+        .btn-wishlist-overlay {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* 2. Bagian Info */
+      .card-content {
+        .game-category {
+          font-size: 10px;
+          text-transform: uppercase;
+          color: #888;
+          font-weight: 600;
+          display: block;
+          margin-bottom: 4px;
+        }
+
+        .game-title {
+          font-size: 14px;
+          color: #fff;
+          font-weight: 500;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          margin-bottom: 8px;
+        }
+
+        /* Bagian Harga (Diskon & Harga Coret) */
+        .game-meta-row {
+          game-category {
+            font-size: 10px;
+            text-transform: uppercase;
+            color: #888;
+            font-weight: 600;
+            display: block;
+            margin-bottom: 4px;
+          }
+
+          .game-title {
+            font-size: 14px;
+            color: #fff;
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-bottom: 8px;
+          }
+
+          /* --- UPDATE: TAMPILAN META DATA (RATING) --- */
+          .game-meta-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            margin-top: 4px;
+
+            .badge-rating {
+              display: flex;
+              align-items: center;
+              gap: 4px;
+              background-color: #333; /* Background gelap */
+              color: #fff;
+              padding: 4px 8px;
+              border-radius: 4px;
+              font-weight: 600;
+              font-size: 12px;
+
+              i {
+                color: #ffc107; /* Warna kuning emas untuk bintang */
+                font-size: 10px;
+              }
+            }
+
+            .meta-date {
+              color: #888;
+              font-size: 12px;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .page-section.active {
+    display: block;
+  }
+
+  .hidden {
+    display: none !important;
+  }
+}
+
+/* keyframe */
+@keyframes progress {
+  0% {
+    width: 0%;
+  }
+  100% {
+    width: 100%;
+  }
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.6;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
