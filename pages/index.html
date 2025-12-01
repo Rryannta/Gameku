@@ -79,13 +79,21 @@
             </div>
           </div>
 
-          <a href="#" class="item">STORE</a>
+          <a href="#" class="item" onclick="switchPage('view-discover')"
+            >GAMES</a
+          >
         </div>
 
         <div class="nav-menu">
           <ul class="nav-list">
-            <a href="#" class="nav-item">Distribution</a>
-            <a href="#" class="nav-item">Support</a>
+            <li>
+              <a
+                href="#"
+                class="nav-item"
+                onclick="switchPage('view-collection')"
+                >My Library</a
+              >
+            </li>
           </ul>
         </div>
       </div>
@@ -113,6 +121,7 @@
           >
           <a href="#" class="nav-tab" data-target="view-browse">Browse</a>
           <a href="#" class="nav-tab" data-target="view-news">News</a>
+          <a href="#" class="nav-tab" data-target="view-calendar">Calendar</a>
         </div>
       </div>
 
@@ -127,8 +136,11 @@
                 <p id="heroDesc">Please wait...</p>
 
                 <div class="hero-buttons">
-                  <button class="btn-primary">Learn More</button>
-                  <button class="btn-secondary">
+                  <button id="btnHeroLearnMore" class="btn-primary">
+                    Learn More
+                  </button>
+
+                  <button id="btnHeroWishlist" class="btn-secondary">
                     <i class="bi bi-plus-circle"></i> Add to Wishlist
                   </button>
                 </div>
@@ -158,27 +170,688 @@
             <div class="swiper-wrapper" id="swiperWrapper"></div>
           </div>
         </div>
+
+        <div class="news-section">
+          <div class="section-header-row">
+            <h3>Trending & Updates</h3>
+          </div>
+
+          <div class="news-grid" id="newsContainer">
+            <div class="skeleton-news"></div>
+            <div class="skeleton-news"></div>
+            <div class="skeleton-news"></div>
+          </div>
+        </div>
+
+        <div class="free-games-section">
+          <div class="free-header">
+            <div class="free-title">
+              <i class="bi bi-gift"></i>
+              <h3>Spotlight</h3>
+            </div>
+            <!-- <button class="btn-view-more">View More</button> -->
+          </div>
+
+          <div class="free-games-grid" id="freeGamesContainer">
+            <div class="skeleton-free"></div>
+            <div class="skeleton-free"></div>
+            <div class="skeleton-free"></div>
+          </div>
+        </div>
+
+        <div class="game-swiper-section">
+          <div class="section-header-row">
+            <h3>Top New Releases</h3>
+            <div class="swiper-nav-btns">
+              <button class="nav-btn-prev-nr">
+                <i class="bi bi-chevron-left"></i>
+              </button>
+              <button class="nav-btn-next-nr">
+                <i class="bi bi-chevron-right"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="swiper myNewReleasesSwiper">
+            <div class="swiper-wrapper" id="newReleasesWrapper"></div>
+          </div>
+        </div>
+
+        <div class="hoyoverse-section">
+          <div class="section-header-row">
+            <div class="hoyo-header">
+              <img
+                src="https://th.bing.com/th/id/ODF.PY9ZV_cpt7otPdhEdBVviA?w=32&h=32&qlt=92&pcl=fffffa&o=6&pid=1.2"
+                alt="Hoyoverse"
+                class="hoyo-logo-img"
+              />
+              <h3>Hoyoverse Universe</h3>
+            </div>
+          </div>
+
+          <div class="hoyo-grid" id="hoyoContainer">
+            <div class="skeleton-hoyo"></div>
+            <div class="skeleton-hoyo"></div>
+            <div class="skeleton-hoyo"></div>
+          </div>
+        </div>
+
+        <div class="triple-list-section">
+          <div class="list-column">
+            <div class="list-header">
+              <h3>Top Sellers</h3>
+              <button class="btn-sm-outline">View All</button>
+            </div>
+            <div class="list-body" id="listTopSellers">
+              <div class="skeleton-list-item"></div>
+              <div class="skeleton-list-item"></div>
+              <div class="skeleton-list-item"></div>
+              <div class="skeleton-list-item"></div>
+              <div class="skeleton-list-item"></div>
+            </div>
+          </div>
+
+          <div class="list-column">
+            <div class="list-header">
+              <h3>Most Played</h3>
+              <button class="btn-sm-outline">View All</button>
+            </div>
+            <div class="list-body" id="listMostPlayed">
+              <div class="skeleton-list-item"></div>
+              <div class="skeleton-list-item"></div>
+              <div class="skeleton-list-item"></div>
+              <div class="skeleton-list-item"></div>
+              <div class="skeleton-list-item"></div>
+            </div>
+          </div>
+
+          <div class="list-column">
+            <div class="list-header">
+              <h3>Top Upcoming</h3>
+              <button class="btn-sm-outline">View All</button>
+            </div>
+            <div class="list-body" id="listUpcoming">
+              <div class="skeleton-list-item"></div>
+              <div class="skeleton-list-item"></div>
+              <div class="skeleton-list-item"></div>
+              <div class="skeleton-list-item"></div>
+              <div class="skeleton-list-item"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="game-swiper-section">
+          <div class="section-header-row">
+            <h3>Trending Now</h3>
+            <div class="swiper-nav-btns">
+              <button class="nav-btn-prev-trend">
+                <i class="bi bi-chevron-left"></i>
+              </button>
+              <button class="nav-btn-next-trend">
+                <i class="bi bi-chevron-right"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="swiper swiperTrending">
+            <div class="swiper-wrapper" id="trendingWrapper"></div>
+          </div>
+        </div>
+
+        <div class="game-swiper-section">
+          <div class="section-header-row">
+            <h3>Most Popular</h3>
+            <div class="swiper-nav-btns">
+              <button class="nav-btn-prev-pop">
+                <i class="bi bi-chevron-left"></i>
+              </button>
+              <button class="nav-btn-next-pop">
+                <i class="bi bi-chevron-right"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="swiper swiperPopular">
+            <div class="swiper-wrapper" id="popularWrapper"></div>
+          </div>
+        </div>
+
+        <div class="closing-section">
+          <div class="closing-grid">
+            <div class="closing-card">
+              <div class="closing-img">
+                <img
+                  src="https://media.rawg.io/media/games/b29/b294fdd866dcdb643e7bab370a552855.jpg"
+                  alt="Top Rated"
+                />
+              </div>
+              <div class="closing-content">
+                <h3>Hall of Fame</h3>
+                <p>
+                  Discover the masterpieces. Explore games with the highest
+                  Metacritic scores of all time.
+                </p>
+                <button class="btn-closing" onclick="switchPage('view-browse')">
+                  Explore Top Rated
+                </button>
+              </div>
+            </div>
+
+            <div class="closing-card">
+              <div class="closing-img">
+                <img
+                src="https://media.rawg.io/media/games/4cf/4cfc6b7f1850590a4634b08bfab308ab.jpg"
+                alt="Indie Games"" alt="Indie Games" />
+              </div>
+              <div class="closing-content">
+                <h3>Indie Hidden Gems</h3>
+                <p>
+                  Support independent developers. Dive into unique stories and
+                  creative gameplay mechanics.
+                </p>
+                <button class="btn-closing" onclick="switchPage('view-browse')">
+                  Browse Indie
+                </button>
+              </div>
+            </div>
+
+            <div class="closing-card">
+              <div class="closing-img">
+                <img
+                  src="https://images.unsplash.com/photo-1555099962-4199c345e5dd?q=80&w=1000&auto=format&fit=crop"
+                  alt="Development"
+                />
+              </div>
+              <div class="closing-content">
+                <h3>About GameKu</h3>
+                <p>
+                  This project is built using RAWG API to demonstrate modern web
+                  development skills.
+                </p>
+                <a
+                  href="https://github.com/Rryannta"
+                  target="_blank"
+                  class="btn-closing"
+                  >Visit GitHub</a
+                >
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
 
       <section id="view-browse" class="page-section hidden">
-        <div class="browse-header">
-          <h2>Browse Games</h2>
-          <div id="popularGenresGrid" class="genre-grid"></div>
+        <div class="browse-genre-section">
+          <div class="section-header-row">
+            <h2>Popular Genres</h2>
+            <div class="swiper-nav-btns">
+              <button class="nav-btn-prev-genre">
+                <i class="bi bi-chevron-left"></i>
+              </button>
+              <button class="nav-btn-next-genre">
+                <i class="bi bi-chevron-right"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="swiper myGenreSwiper">
+            <div class="swiper-wrapper" id="genreSwiperWrapper"></div>
+          </div>
         </div>
-        <div id="browseContainer" class="game-grid"></div>
+
+        <div class="top-charts-section">
+          <div class="top-header-row">
+            <div class="header-left">
+              <h2 class="section-title">TOP</h2>
+
+              <div class="chart-tabs">
+                <button
+                  class="tab-btn active"
+                  onclick="switchTopTab('year', this)"
+                >
+                  Best of The Year
+                </button>
+                <button
+                  class="tab-btn"
+                  onclick="switchTopTab('prev-year', this)"
+                >
+                  Popular in 2024
+                </button>
+                <button
+                  class="tab-btn"
+                  onclick="switchTopTab('all-time', this)"
+                >
+                  All Time Top
+                </button>
+              </div>
+            </div>
+
+            <div class="header-right">
+              <div class="chart-nav-btns">
+                <button class="nav-prev-chart">
+                  <i class="bi bi-chevron-left"></i>
+                </button>
+                <button class="nav-next-chart">
+                  <i class="bi bi-chevron-right"></i>
+                </button>
+              </div>
+              <!-- <a href="#" class="link-view-all" onclick="loadGamesForBrowse()"
+                >View All</a
+              > -->
+            </div>
+          </div>
+
+          <div class="swiper myTopChartSwiper">
+            <div class="swiper-wrapper" id="topChartWrapper"></div>
+          </div>
+        </div>
+
+        <div class="section-header-row">
+          <h2>Browse Game</h2>
+        </div>
+
+        <div class="browse-content-area">
+          <div class="browse-main">
+            <div class="sort-header">
+              <span>Show: </span>
+              <select id="sortSelector" onchange="applyFilters()">
+                <option value="-added">Popularity</option>
+                <option value="-released">Newest</option>
+                <option value="-rating">Top Rated</option>
+              </select>
+            </div>
+
+            <div id="browseContainer" class="game-grid">
+              <p style="color: #777">Loading games...</p>
+            </div>
+
+            <div
+              class="load-more-container"
+              style="text-align: center; margin-top: 40px"
+            >
+              <button
+                id="btnLoadMore"
+                class="btn-load-more"
+                onclick="loadMoreGames()"
+              >
+                Load More
+              </button>
+            </div>
+          </div>
+
+          <aside class="browse-sidebar">
+            <div class="sidebar-header">
+              <span>Filters <span id="filterCount">(0)</span></span>
+              <button onclick="resetFilters()">RESET</button>
+            </div>
+
+            <div class="filter-search-box">
+              <i class="bi bi-search"></i>
+              <input
+                type="text"
+                id="filterSearchInput"
+                placeholder="Keywords"
+                autocomplete="off"
+              />
+            </div>
+
+            <div id="filterListContainer" class="filter-list-wrapper"></div>
+          </aside>
+        </div>
       </section>
 
       <section id="view-news" class="page-section hidden">
-        <h2>Latest News</h2>
+        <div class="news-container">
+          <div class="section-header-row" style="margin-bottom: 20px">
+            <h2>Release Radar</h2>
+          </div>
+
+          <div class="news-hero" id="newsHero">
+            <div class="skeleton-news-hero"></div>
+          </div>
+
+          <h3 class="section-title-sub">Just Updated & Released</h3>
+          <div class="news-feed-grid" id="newsFeed">
+            <div class="skeleton-news-item"></div>
+            <div class="skeleton-news-item"></div>
+            <div class="skeleton-news-item"></div>
+            <div class="skeleton-news-item"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="view-calendar" class="page-section hidden">
+        <div
+          class="calendar-container"
+          style="max-width: 1200px; margin: 0 auto"
+        >
+          <div class="calendar-header">
+            <h2>Release Calendar <span id="calendarYear">2025</span></h2>
+          </div>
+
+          <div class="month-navigator"></div>
+
+          <h3 id="activeMonthTitle" class="section-title-sub">
+            Releases this month
+          </h3>
+
+          <div id="calendarGrid" class="game-grid">
+            <p style="color: #777">Select a month to view releases.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="view-community" class="page-section hidden">
+        <div
+          class="community-container"
+          style="max-width: 1200px; margin: 0 auto; padding-top: 20px"
+        >
+          <div class="community-header">
+            <div>
+              <h2>Community Hub</h2>
+              <p style="color: #888">
+                Share your moments, artwork, and discussions.
+              </p>
+            </div>
+            <button class="btn-primary-sm" onclick="openPostModal()">
+              <i class="bi bi-pencil-square"></i> New Post
+            </button>
+          </div>
+
+          <div class="comm-tabs">
+            <button
+              class="comm-tab active"
+              onclick="switchCommTab('artwork', this)"
+            >
+              Artwork
+            </button>
+            <button
+              class="comm-tab"
+              onclick="switchCommTab('screenshots', this)"
+            >
+              Screenshots
+            </button>
+            <button
+              class="comm-tab"
+              onclick="switchCommTab('discussions', this)"
+            >
+              Discussions
+            </button>
+          </div>
+
+          <div id="comm-artwork" class="comm-content active">
+            <div class="masonry-grid" id="communityMasonry">
+              <div class="skeleton-masonry"></div>
+              <div class="skeleton-masonry"></div>
+              <div class="skeleton-masonry"></div>
+              <div class="skeleton-masonry"></div>
+            </div>
+          </div>
+
+          <div id="comm-discussions" class="comm-content hidden">
+            <div class="forum-list" id="communityForum"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="view-collection" class="page-section hidden">
+        <div class="browse-content-area" style="margin-top: 20px">
+          <div
+            class="section-header-row"
+            style="
+              border-bottom: 1px solid #333;
+              padding-bottom: 20px;
+              margin-bottom: 30px;
+            "
+          >
+            <h2 style="margin-right: 30px">My Games</h2>
+
+            <div class="comm-tabs">
+              <button
+                class="comm-tab active"
+                onclick="switchCollectionTab('collection', this)"
+              >
+                Collection
+                <span
+                  id="count-collection"
+                  style="opacity: 0.5; font-size: 12px"
+                  >(0)</span
+                >
+              </button>
+              <button
+                class="comm-tab"
+                onclick="switchCollectionTab('wishlist', this)"
+              >
+                Wishlist
+                <span id="count-wishlist" style="opacity: 0.5; font-size: 12px"
+                  >(0)</span
+                >
+              </button>
+            </div>
+          </div>
+
+          <div id="tab-content-collection" class="collection-tab-content">
+            <div id="collectionGrid" class="game-grid"></div>
+            <div
+              id="empty-collection"
+              class="hidden"
+              style="text-align: center; padding: 50px; color: #777"
+            >
+              <i
+                class="bi bi-controller"
+                style="font-size: 40px; margin-bottom: 10px; display: block"
+              ></i>
+              <p>You haven't added any games to your collection yet.</p>
+            </div>
+          </div>
+
+          <div id="tab-content-wishlist" class="collection-tab-content hidden">
+            <div id="wishlistGrid" class="game-grid"></div>
+            <div
+              id="empty-wishlist"
+              class="hidden"
+              style="text-align: center; padding: 50px; color: #777"
+            >
+              <i
+                class="bi bi-heart"
+                style="font-size: 40px; margin-bottom: 10px; display: block"
+              ></i>
+              <p>Your wishlist is empty.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="view-detail" class="page-section hidden">
+        <button
+          onclick="switchPage('view-discover')"
+          class="btn-back"
+          style="margin: 20px 40px"
+        >
+          <i class="bi bi-arrow-left"></i> Back to Store
+        </button>
+
+        <div
+          class="detail-container"
+          style="max-width: 1100px; margin: 0 auto; padding: 0 20px"
+        >
+          <div id="detailHeader" class="detail-header">
+            <div class="detail-content">
+              <div class="detail-title-row">
+                <h1 id="detailTitle">Loading...</h1>
+                <span id="detailMetascore" class="metascore-badge">--</span>
+              </div>
+
+              <div id="detailActionArea"></div>
+            </div>
+          </div>
+
+          <div class="detail-info-grid">
+            <div class="info-item">
+              <label>Developer</label>
+              <span id="detailDev">-</span>
+            </div>
+            <div class="info-item">
+              <label>Publisher</label>
+              <span id="detailPub">-</span>
+            </div>
+            <div class="info-item">
+              <label>Release Date</label>
+              <span id="detailDate">-</span>
+            </div>
+            <div class="info-item">
+              <label>Platform</label>
+              <span id="detailPlatform">-</span>
+            </div>
+          </div>
+
+          <div id="detailTags" class="detail-tags"></div>
+
+          <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 40px">
+            <div class="detail-left">
+              <h3 style="color: white; margin-bottom: 15px">About This Game</h3>
+              <div
+                id="detailDesc"
+                style="color: #ccc; line-height: 1.6; margin-bottom: 40px"
+              ></div>
+
+              <h3 style="color: white; margin-bottom: 15px">Screenshots</h3>
+              <div id="detailScreenshots" class="screenshot-grid"></div>
+            </div>
+
+            <div class="detail-right">
+              <div class="specs-container">
+                <h3 style="color: white; margin-bottom: 20px">
+                  System Requirements
+                </h3>
+                <div id="detailRequirements"></div>
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
     </main>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+      <div class="footer-container">
+        <div class="footer-top">
+          <div class="footer-brand">
+            <h3>GameKu Store</h3>
+          </div>
+          <div class="footer-socials">
+            <a href="#"><i class="bi bi-facebook"></i></a>
+            <a href="#"><i class="bi bi-twitter-x"></i></a>
+            <a href="#"><i class="bi bi-youtube"></i></a>
+            <a href="#"><i class="bi bi-instagram"></i></a>
+          </div>
+        </div>
+
+        <hr class="footer-divider" />
+
+        <div class="footer-links-grid">
+          <div class="link-column">
+            <h4>Navigation</h4>
+            <ul>
+              <li>
+                <a href="#" onclick="switchPage('view-discover')">Discover</a>
+              </li>
+              <li>
+                <a href="#" onclick="switchPage('view-browse')">Browse Games</a>
+              </li>
+              <li>
+                <a href="#" onclick="switchPage('view-news')">News & Updates</a>
+              </li>
+            </ul>
+          </div>
+
+          <div class="link-column">
+            <h4>Top Genres</h4>
+            <ul>
+              <li>
+                <a href="#" onclick="switchPage('view-browse')">Action Games</a>
+              </li>
+              <li><a href="#" onclick="switchPage('view-browse')">RPG</a></li>
+              <li>
+                <a href="#" onclick="switchPage('view-browse')">Strategy</a>
+              </li>
+              <li><a href="#" onclick="switchPage('view-browse')">Indie</a></li>
+            </ul>
+          </div>
+
+          <div class="link-column">
+            <h4>Resources</h4>
+            <ul>
+              <li>
+                <a href="https://rawg.io/apidocs" target="_blank">RAWG API</a>
+              </li>
+              <li>
+                <a href="https://github.com/" target="_blank"
+                  >GitHub Repository</a
+                >
+              </li>
+              <li><a href="#">About Developer</a></li>
+              <li><a href="#">Portfolio</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <hr class="footer-divider" />
+
+        <div class="footer-bottom">
+          <div class="copyright-text">
+            <p>&copy; 2025 GameKu. Created for educational purposes.</p>
+            <p>Data provided by RAWG. Design inspired by Epic Games Store.</p>
+          </div>
+
+          <button
+            class="btn-back-top"
+            onclick="window.scrollTo({top: 0, behavior: 'smooth'})"
+          >
+            Back to top <i class="bi bi-arrow-up-short"></i>
+          </button>
+        </div>
+      </div>
+    </footer>
+
+    <!-- modal -->
+    <div id="collectionModal" class="custom-modal-overlay hidden">
+      <div class="custom-modal-content" style="max-width: 400px">
+        <div class="custom-modal-header">
+          <h3>Save to...</h3>
+          <button onclick="closeCollectionModal()">
+            <i class="bi bi-x-lg"></i>
+          </button>
+        </div>
+
+        <div id="collectionList" class="collection-list-ui"></div>
+
+        <div class="create-new-col-wrapper">
+          <input
+            type="text"
+            id="newCollectionInput"
+            placeholder="New collection name..."
+          />
+          <button onclick="handleCreateCollection()" class="btn-create-col">
+            <i class="bi bi-plus-lg"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="toast-notification">Notification</div>
 
     <!-- script -->
     <script src="/js/api.js"></script>
     <script src="/js/components/navbar.js"></script>
     <script src="/js/components/router.js"></script>
-    <script src="/js/page/main.js"></script>
+    <script src="/js/page/discover.js"></script>
     <script src="/js/page/browse.js"></script>
+    <script src="/js/page/news.js"></script>
+    <script src="/js/page/calendar.js"></script>
+    <!-- <script src="/js/page/community.js"></script> -->
+    <script src="/js/page/collection.js"></script>
+    <script src="/js/page/detail.js"></script>
     <script src="/js/utils.js"></script>
     <!-- bootstrap -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
