@@ -1,23 +1,22 @@
-/* assets/js/collection.js - FINAL VERSION (DECODING FIX) */
+/* assets/js/collection.js - WITH STATUS TRACKER */
 
 // ==================================================================
-// 1. DATA MANAGEMENT (LOCAL STORAGE)
+// 1. DATA MANAGEMENT
 // ==================================================================
 
-// --- A. CUSTOM COLLECTIONS (FOLDERS) ---
-function getAllCollections() {
+window.getAllCollections = function () {
   const defaultData = [{ name: "Favorites", games: [] }];
   return (
     JSON.parse(localStorage.getItem("gameku_custom_collections")) || defaultData
   );
-}
+};
 
-function saveAllCollections(data) {
+window.saveAllCollections = function (data) {
   localStorage.setItem("gameku_custom_collections", JSON.stringify(data));
   updateCollectionUI();
-}
+};
 
-function createNewCollection(name) {
+window.createNewCollection = function (name) {
   const collections = getAllCollections();
   if (collections.some((c) => c.name === name)) {
     alert("Collection name already exists!");
@@ -26,27 +25,49 @@ function createNewCollection(name) {
   collections.push({ name: name, games: [] });
   saveAllCollections(collections);
   return true;
-}
+};
 
-function addGameToCollection(collectionName, game) {
+window.addGameToCollection = function (collectionName, game) {
   const collections = getAllCollections();
   const target = collections.find((c) => c.name === collectionName);
   if (target) {
     if (!target.games.some((g) => g.id === game.id)) {
-      target.games.push(game); // Simpan object game utuh
+      // TAMBAHAN: Simpan Status Default 'Backlog'
+      target.games.push({
+        ...game, // Copy semua data game
+        status: "backlog", // Default status
+        addedAt: new Date().toLocaleDateString(),
+      });
       saveAllCollections(collections);
       showToast(`Saved to ${collectionName}`);
     }
   }
-}
+};
 
-function removeGameFromCollection(collectionName, gameId) {
+// --- FITUR BARU: UPDATE STATUS ---
+window.changeGameStatus = function (collectionName, gameId, newStatus) {
+  const collections = getAllCollections();
+  const targetCol = collections.find((c) => c.name === collectionName);
+
+  if (targetCol) {
+    const game = targetCol.games.find((g) => g.id === gameId);
+    if (game) {
+      game.status = newStatus;
+      saveAllCollections(collections);
+      // Optional: Re-render untuk update warna border dropdown
+      renderCollectionGrid();
+    }
+  }
+};
+// ----------------------------------
+
+window.removeGameFromCollection = function (collectionName, gameId) {
   const collections = getAllCollections();
   const target = collections.find((c) => c.name === collectionName);
   if (target) {
     target.games = target.games.filter((g) => g.id !== gameId);
     saveAllCollections(collections);
-    // Refresh UI halaman library jika sedang aktif
+
     if (
       document.getElementById("view-collection") &&
       !document.getElementById("view-collection").classList.contains("hidden")
@@ -54,19 +75,19 @@ function removeGameFromCollection(collectionName, gameId) {
       initCollectionPage();
     }
   }
-}
+};
 
-function isGameInAnyCollection(gameId) {
+window.isGameInAnyCollection = function (gameId) {
   const collections = getAllCollections();
   return collections.some((c) => c.games.some((g) => g.id === gameId));
-}
+};
 
-// --- B. WISHLIST ---
-function getWishlistData() {
+// --- WISHLIST ---
+window.getWishlistData = function () {
   return JSON.parse(localStorage.getItem("gameku_wishlist")) || [];
-}
+};
 
-function addToWishlist(game) {
+window.addToWishlist = function (game) {
   let list = getWishlistData();
   if (!list.some((g) => g.id === game.id)) {
     list.push(game);
@@ -74,9 +95,9 @@ function addToWishlist(game) {
     updateCollectionUI();
     showToast("Added to Wishlist");
   }
-}
+};
 
-function removeFromWishlist(gameId) {
+window.removeFromWishlist = function (gameId) {
   let list = getWishlistData();
   list = list.filter((g) => g.id !== gameId);
   localStorage.setItem("gameku_wishlist", JSON.stringify(list));
@@ -88,17 +109,18 @@ function removeFromWishlist(gameId) {
   ) {
     initCollectionPage();
   }
-}
+};
 
-function isGameInWishlist(id) {
+window.isGameInWishlist = function (id) {
   return getWishlistData().some((g) => g.id === id);
-}
+};
 
 // ==================================================================
-// 2. HANDLE QUICK ACTIONS (DECODING & EVENTS)
+// 2. HANDLERS & MODAL
 // ==================================================================
+// ... (Bagian Modal Logic Tidak Berubah, tetap sama seperti sebelumnya) ...
 
-// Helper: Decode data dari HTML (Kebalikan dari utils.js)
+// Helper Decode
 function decodeGameData(id, encName, encImage, rating, encReleased, encGenres) {
   return {
     id: parseInt(id),
@@ -110,7 +132,6 @@ function decodeGameData(id, encName, encImage, rating, encReleased, encGenres) {
   };
 }
 
-// 1. Handle Tombol Wishlist (Hati)
 window.handleQuickWishlist = function (
   event,
   id,
@@ -120,8 +141,7 @@ window.handleQuickWishlist = function (
   released,
   encGenres
 ) {
-  event.stopPropagation(); // Stop klik ke detail
-
+  event.stopPropagation();
   const gameObj = decodeGameData(
     id,
     encName,
@@ -148,7 +168,6 @@ window.handleQuickWishlist = function (
   }
 };
 
-// 2. Handle Tombol Collection (Bookmark / Modal)
 window.handleOpenCollectionModal = function (
   event,
   id,
@@ -159,7 +178,6 @@ window.handleOpenCollectionModal = function (
   encGenres
 ) {
   event.stopPropagation();
-
   const gameObj = decodeGameData(
     id,
     encName,
@@ -168,12 +186,8 @@ window.handleOpenCollectionModal = function (
     released,
     encGenres
   );
-
-  // Set global temp variable
   window.tempGameData = gameObj;
-
   renderCollectionListInModal();
-
   const modal = document.getElementById("collectionModal");
   if (modal) {
     modal.classList.remove("hidden");
@@ -181,41 +195,41 @@ window.handleOpenCollectionModal = function (
   }
 };
 
-// --- MODAL HELPERS ---
 window.closeCollectionModal = function () {
   const modal = document.getElementById("collectionModal");
   if (modal) {
     modal.classList.remove("show");
     setTimeout(() => modal.classList.add("hidden"), 300);
+    window.tempGameData = null;
   }
 };
 
 function renderCollectionListInModal() {
   const container = document.getElementById("collectionList");
-  const collections = getAllCollections();
   if (!container) return;
+  const collections = getAllCollections();
   container.innerHTML = "";
+  if (!window.tempGameData) return;
 
   collections.forEach((col) => {
     const isAdded = col.games.some((g) => g.id === window.tempGameData.id);
     const icon = isAdded
-      ? '<i class="bi bi-check-circle-fill"></i>'
-      : '<i class="bi bi-circle"></i>';
+      ? '<i class="bi bi-check-circle-fill" style="color:#0074e4"></i>'
+      : '<i class="bi bi-circle" style="color:#555"></i>';
     const borderClass = isAdded ? "has-game" : "";
 
     const div = document.createElement("div");
     div.className = `collection-option ${borderClass}`;
     div.onclick = () => handleToggleCollection(col.name);
-
     div.innerHTML = `<span>${col.name} <small style="color:#777">(${col.games.length})</small></span>${icon}`;
     container.appendChild(div);
   });
 }
 
 function handleToggleCollection(collectionName) {
+  if (!window.tempGameData) return;
   const collections = getAllCollections();
   const target = collections.find((c) => c.name === collectionName);
-
   if (target.games.some((g) => g.id === window.tempGameData.id)) {
     removeGameFromCollection(collectionName, window.tempGameData.id);
   } else {
@@ -228,14 +242,16 @@ function handleToggleCollection(collectionName) {
 window.handleCreateCollection = function () {
   const input = document.getElementById("newCollectionInput");
   const name = input.value.trim();
-  if (name && createNewCollection(name)) {
-    input.value = "";
-    renderCollectionListInModal();
+  if (name) {
+    if (createNewCollection(name)) {
+      input.value = "";
+      renderCollectionListInModal();
+    }
   }
 };
 
 // ==================================================================
-// 3. RENDER PAGE LOGIC (MY LIBRARY TAB)
+// 3. RENDER PAGE LOGIC (MY LIBRARY TAB) - UPDATE DISINI
 // ==================================================================
 function initCollectionPage() {
   renderCollectionGrid();
@@ -243,17 +259,14 @@ function initCollectionPage() {
   updateCollectionUI();
 }
 
-/* assets/js/collection.js - BAGIAN RENDER COLLECTION UPDATE */
-
 function renderCollectionGrid() {
   const container = document.getElementById("collectionGrid");
   const emptyState = document.getElementById("empty-collection");
   if (!container) return;
+  container.innerHTML = "";
 
-  container.innerHTML = ""; // Bersihkan container utama
-
-  // Hapus class 'game-grid' dari container utama karena kita akan bikin grid per folder
   container.classList.remove("game-grid");
+  container.style.display = "block";
 
   const collections = getAllCollections();
   const totalGames = collections.reduce(
@@ -267,50 +280,83 @@ function renderCollectionGrid() {
   }
   if (emptyState) emptyState.classList.add("hidden");
 
-  // LOOP SETIAP FOLDER
   collections.forEach((col) => {
     if (col.games.length > 0) {
-      // 1. Buat Wrapper Folder
-      const folderWrapper = document.createElement("div");
-      folderWrapper.className = "collection-group";
+      // Wrapper Folder
+      const folder = document.createElement("div");
+      folder.className = "collection-group";
+      folder.style.marginBottom = "40px";
 
-      // 2. Buat Header Folder
-      folderWrapper.innerHTML = `
-                <div class="collection-group-header">
-                    <h3>${col.name}</h3>
-                    <span>${col.games.length}</span>
+      // Header Folder
+      folder.innerHTML = `
+                <div class="collection-group-header" style="display:flex; align-items:center; gap:10px; margin-bottom:15px; border-bottom:1px solid #333; padding-bottom:10px;">
+                    <h3 style="color:#fff; font-size:20px; margin:0;">${col.name}</h3>
+                    <span style="background:#333; color:#ccc; padding:2px 8px; border-radius:4px; font-size:12px;">${col.games.length}</span>
                 </div>
             `;
 
-      // 3. Buat Grid Khusus Folder ini
-      const gridDiv = document.createElement("div");
-      gridDiv.className = "game-grid"; // Grid system diterapkan disini
+      const grid = document.createElement("div");
+      grid.className = "game-grid";
 
-      // 4. Isi Grid dengan Kartu Game
       col.games.forEach((game) => {
-        // Generate Kartu
+        // 1. Generate Kartu Biasa
         let cardHtml = createGameCard(game);
 
-        // Tombol Delete
-        const deleteBtn = `
-                    <button class="btn-action-card" style="background:#202020; border:1px solid #333;" 
-                            onclick="event.stopPropagation(); removeGameFromCollection('${col.name}', ${game.id})">
-                        <i class="bi bi-trash" style="color:#ff4d4d;"></i>
-                    </button>
+        // 2. Siapkan Status Dropdown
+        const currentStatus = game.status || "backlog"; // Default backlog
+
+        // Helper untuk set selected
+        const sel = (val) => (val === currentStatus ? "selected" : "");
+
+        const statusDropdown = `
+                    <div class="card-status-bar">
+                        <select class="status-select ${currentStatus}" 
+                                onclick="event.stopPropagation()" 
+                                onchange="changeGameStatus('${col.name}', ${
+          game.id
+        }, this.value)">
+                            <option value="backlog" ${sel(
+                              "backlog"
+                            )}>Backlog</option>
+                            <option value="playing" ${sel(
+                              "playing"
+                            )}>Playing</option>
+                            <option value="completed" ${sel(
+                              "completed"
+                            )}>Completed</option>
+                            <option value="dropped" ${sel(
+                              "dropped"
+                            )}>Dropped</option>
+                        </select>
+                    </div>
                 `;
 
-        // Replace tombol
+        // 3. Siapkan Tombol Delete
+        const deleteBtn = `
+                    <div class="btn-wishlist-overlay" style="background:#202020; border:1px solid #333; opacity:1; transform:none; top:10px; right:10px;" 
+                         onclick="event.stopPropagation(); removeGameFromCollection('${col.name}', ${game.id})">
+                        <i class="bi bi-trash" style="color:red;"></i>
+                    </div>
+                `;
+
+        // 4. INJECT KE DALAM HTML KARTU
+        // Ganti tombol overlay
         cardHtml = cardHtml.replace(
           /<div class="card-actions-overlay">[\s\S]*?<\/div>/,
-          `<div class="card-actions-overlay" style="top:10px; right:10px;">${deleteBtn}</div>`
+          deleteBtn
         );
 
-        gridDiv.innerHTML += cardHtml;
+        // Masukkan Dropdown sebelum tutup div card-content
+        cardHtml = cardHtml.replace(
+          "</div>\n        </div>",
+          `${statusDropdown}</div></div>`
+        );
+
+        grid.innerHTML += cardHtml;
       });
 
-      // Gabungkan
-      folderWrapper.appendChild(gridDiv);
-      container.appendChild(folderWrapper);
+      folder.appendChild(grid);
+      container.appendChild(folder);
     }
   });
 }
@@ -320,30 +366,28 @@ function renderWishlistGrid() {
   const emptyState = document.getElementById("empty-wishlist");
   if (!container) return;
   container.innerHTML = "";
+  container.classList.add("game-grid");
 
   const wishlist = getWishlistData();
-
   if (wishlist.length === 0) {
     if (emptyState) emptyState.classList.remove("hidden");
+    container.classList.remove("game-grid");
     return;
   }
   if (emptyState) emptyState.classList.add("hidden");
 
   wishlist.forEach((game) => {
     let cardHtml = createGameCard(game);
-
     const deleteBtn = `
-            <button class="btn-action-card" style="background:#202020; border:1px solid #333;" 
-                    onclick="event.stopPropagation(); removeFromWishlist(${game.id})">
+            <div class="btn-wishlist-overlay" style="background:#202020; border:1px solid #333; opacity:1; transform:none; top:10px; right:10px;" 
+                 onclick="event.stopPropagation(); removeFromWishlist(${game.id})">
                 <i class="bi bi-trash" style="color:#ff4d4d;"></i>
-            </button>
+            </div>
         `;
-
     cardHtml = cardHtml.replace(
       /<div class="card-actions-overlay">[\s\S]*?<\/div>/,
-      `<div class="card-actions-overlay">${deleteBtn}</div>`
+      deleteBtn
     );
-
     container.innerHTML += cardHtml;
   });
 }
@@ -366,7 +410,6 @@ function updateCollectionUI() {
   }
 }
 
-// --- UTILS & TOAST ---
 window.switchCollectionTab = function (tabName, btnElement) {
   document
     .querySelectorAll(".comm-tabs .comm-tab")

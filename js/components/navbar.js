@@ -1,4 +1,5 @@
-// Render List Menu (Platform/Genre/Publisher)
+/* assets/js/components/navbar.js - FINAL VERSION */
+
 function renderMenuList(elementId, data, limit, useImage = false) {
   const list = document.getElementById(elementId);
   if (!list) return;
@@ -8,20 +9,27 @@ function renderMenuList(elementId, data, limit, useImage = false) {
     let visualElement = "";
 
     if (useImage) {
-      // Logic Gambar (Publisher)
       const imageUrl = item.image_background
         ? item.image_background
         : "https://placehold.co/50";
       visualElement = `<img src="${imageUrl}" class="menu-img-icon" alt="${item.name}">`;
     } else {
-      // Logic Icon (Platform/Genre)
       const icon = getIconClass(item.name);
       visualElement = `<i class="bi ${icon}"></i>`;
     }
 
     const li = document.createElement("li");
-    // Saat diklik, arahkan ke Browse dan filter
-    li.innerHTML = `<a href="#" onclick="routerToBrowse('${item.slug}', '${item.name}')">${visualElement} ${item.name}</a>`;
+
+    // --- UPDATE LOGIC CLICK ---
+    // Tentukan tipe filter berdasarkan ID Element parentnya
+    let type = "Genre";
+    if (elementId === "platformList") type = "Platform";
+    if (elementId === "publisherList") type = "Publisher";
+
+    // Panggil fungsi filter global di browse.js
+    // item.slug adalah ID text yang aman
+    li.innerHTML = `<a href="#" onclick="filterFromMegaMenu('${type}', '${item.slug}', '${item.name}')">${visualElement} ${item.name}</a>`;
+
     list.appendChild(li);
   });
 }
@@ -29,7 +37,6 @@ function renderMenuList(elementId, data, limit, useImage = false) {
 async function initNavbar() {
   if (typeof fetchData === "undefined") return;
 
-  // Load Data
   const genres = await fetchData("genres", "ordering=-games_count");
   renderMenuList("genreList", genres, 3, false);
 
@@ -37,9 +44,9 @@ async function initNavbar() {
   renderMenuList("platformList", platforms, 3, false);
 
   const publishers = await fetchData("publishers", "ordering=-games_count");
-  renderMenuList("publisherList", publishers, 9, true); // True = Pakai Gambar
+  renderMenuList("publisherList", publishers, 9, true);
 
-  // Interaction Logic (Click/Hover)
+  // Interaction Logic
   const logoWrapper = document.querySelector(".logo");
   const megaMenu = document.querySelector(".mega-menu");
 
@@ -54,13 +61,5 @@ async function initNavbar() {
     );
   }
 }
-
-// Helper Global untuk pindah ke browse dari menu
-window.routerToBrowse = function (slug, name) {
-  // Pindah Tab
-  if (typeof switchPage === "function") switchPage("view-browse");
-  // Filter Game
-  if (typeof filterByGenre === "function") filterByGenre(slug, name);
-};
 
 document.addEventListener("DOMContentLoaded", initNavbar);

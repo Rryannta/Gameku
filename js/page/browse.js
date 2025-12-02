@@ -1,8 +1,10 @@
-/* assets/js/pages/browse.js - FIXED PLATFORM FILTER */
+/* assets/js/pages/browse.js - FINAL FIXED VERSION */
 
 // =================================================
-// 0. STATE & CONFIGURATION
+// 0. GLOBAL STATE & VARIABLES (WAJIB DI ATAS)
 // =================================================
+let topChartSwiperInstance = null; // Variabel ini yang bikin error sebelumnya
+
 let activeFilters = {
   search: "",
   platform: "",
@@ -10,6 +12,7 @@ let activeFilters = {
   tags: "",
   stores: "",
   developers: "",
+  publishers: "",
   ordering: "-added",
   page: 1,
 };
@@ -53,19 +56,19 @@ const filterConfig = [
   },
   {
     type: "dropdown",
-    name: "Developers",
+    name: "Publishers",
     items: [
       { name: "Ubisoft", id: "ubisoft" },
       { name: "Electronic Arts", id: "electronic-arts" },
-      { name: "Rockstar Games", id: "rockstar-games" },
-      { name: "Naughty Dog", id: "naughty-dog" },
-      { name: "CD PROJEKT RED", id: "cd-projekt-red" },
+      { name: "Sony Interactive", id: "sony-interactive-entertainment" },
+      { name: "Square Enix", id: "square-enix" },
+      { name: "Nintendo", id: "nintendo" },
     ],
   },
 ];
 
 // =================================================
-// 1. GENRE CAROUSEL
+// 1. GENRE CAROUSEL (STACK EFFECT)
 // =================================================
 async function initGenreSwiper() {
   const container = document.getElementById("genreSwiperWrapper");
@@ -139,10 +142,8 @@ async function updateGenreCardImages(genreSlug, cardId) {
 }
 
 // =================================================
-// 2. TOP CHARTS
+// 2. TOP CHARTS (TAB MENU)
 // =================================================
-let topChartSwiperInstance = null;
-
 async function initTopCharts(type = "year") {
   const container = document.getElementById("topChartWrapper");
   if (!container) return;
@@ -153,6 +154,7 @@ async function initTopCharts(type = "year") {
   const prevYear = currentYear - 1;
   let apiParams = "";
 
+  // Update Text Tab (Safe Check)
   const prevBtn = document.querySelector("button[onclick*='prev-year']");
   if (prevBtn) prevBtn.innerText = `Popular in ${prevYear}`;
 
@@ -167,29 +169,36 @@ async function initTopCharts(type = "year") {
     apiParams = `dates=${prevYear}-01-01,${prevYear}-12-31&ordering=-added&page_size=10`;
   else if (type === "all-time") apiParams = `ordering=-added&page_size=10`;
 
-  const games = await fetchData("games", apiParams);
+  try {
+    const games = await fetchData("games", apiParams);
 
-  games.forEach((game) => {
-    const slide = document.createElement("div");
-    slide.classList.add("swiper-slide");
-
-    slide.innerHTML = createGameCard(game);
-
-    container.appendChild(slide);
-  });
-
-  if (topChartSwiperInstance) topChartSwiperInstance.destroy(true, true);
-
-  if (typeof Swiper !== "undefined") {
-    topChartSwiperInstance = new Swiper(".myTopChartSwiper", {
-      slidesPerView: 2,
-      spaceBetween: 15,
-      navigation: { nextEl: ".nav-next-chart", prevEl: ".nav-prev-chart" },
-      breakpoints: {
-        640: { slidesPerView: 3, spaceBetween: 20 },
-        1024: { slidesPerView: 5, spaceBetween: 20 },
-      },
+    games.forEach((game) => {
+      const slide = document.createElement("div");
+      slide.classList.add("swiper-slide");
+      // Gunakan createGameCard agar tombol wishlist ada
+      slide.innerHTML = createGameCard(game);
+      container.appendChild(slide);
     });
+
+    // Reset Swiper Lama
+    if (topChartSwiperInstance) {
+      topChartSwiperInstance.destroy(true, true);
+    }
+
+    // Init Swiper Baru
+    if (typeof Swiper !== "undefined") {
+      topChartSwiperInstance = new Swiper(".myTopChartSwiper", {
+        slidesPerView: 2,
+        spaceBetween: 15,
+        navigation: { nextEl: ".nav-next-chart", prevEl: ".nav-prev-chart" },
+        breakpoints: {
+          640: { slidesPerView: 3, spaceBetween: 20 },
+          1024: { slidesPerView: 5, spaceBetween: 20 },
+        },
+      });
+    }
+  } catch (error) {
+    console.error("Gagal load Top Charts:", error);
   }
 }
 
@@ -202,7 +211,7 @@ window.switchTopTab = function (type, btnElement) {
 };
 
 // =================================================
-// 3. SIDEBAR FILTER SYSTEM (BUG FIX DISINI)
+// 3. SIDEBAR FILTER SYSTEM
 // =================================================
 async function initFilterSidebar() {
   const container = document.getElementById("filterListContainer");
@@ -246,20 +255,15 @@ async function initFilterSidebar() {
       if (group.items) {
         group.items.forEach((item) => {
           const btn = document.createElement("div");
-
-          // --- PERBAIKAN LOGIKA KLIK DISINI ---
           if (group.isPlatform) {
             btn.className = "platform-item";
             btn.innerHTML = `<i class="bi ${item.icon}"></i> <span>${item.name}</span>`;
-            // FIX: Gunakan group.name ('Platform') bukan hardcode 'platform'
-            btn.onclick = () => toggleFilter(group.name, item.id, btn);
+            btn.onclick = () => toggleFilter(group.name, item.id, btn); // FIXED: group.name
           } else {
             btn.className = "filter-btn";
             btn.innerText = item.name;
-            // FIX: Gunakan group.name
-            btn.onclick = () => toggleFilter(group.name, item.id, btn);
+            btn.onclick = () => toggleFilter(group.name, item.id, btn); // FIXED: group.name
           }
-
           content.appendChild(btn);
         });
       }
@@ -282,17 +286,14 @@ async function initFilterSidebar() {
 
 window.toggleFilter = function (categoryName, value, element) {
   let filterType = "";
-  // Pastikan stringnya cocok dengan group.name di config (Case Sensitive)
   if (categoryName === "Genre") filterType = "genre";
   else if (categoryName === "Platform") filterType = "platform";
   else if (categoryName === "Features") filterType = "tags";
   else if (categoryName === "Stores") filterType = "stores";
+  else if (categoryName === "Publishers") filterType = "publishers";
   else if (categoryName === "Developers") filterType = "developers";
 
-  if (!filterType) {
-    console.error("Unknown Filter Category:", categoryName);
-    return;
-  }
+  if (!filterType) return;
 
   const isSelected = element.classList.contains("selected");
   const parent = element.parentElement;
@@ -317,7 +318,9 @@ window.applyFilters = function () {
   Object.values(activeFilters).forEach((val) => {
     if (val && val !== "-added" && val !== 1) count++;
   });
-  document.getElementById("filterCount").innerText = `(${count})`;
+
+  const filterCount = document.getElementById("filterCount");
+  if (filterCount) filterCount.innerText = `(${count})`;
 
   activeFilters.page = 1;
   loadGamesForBrowse(false);
@@ -332,54 +335,57 @@ window.resetFilters = function () {
     tags: "",
     stores: "",
     developers: "",
+    publishers: "",
     page: 1,
   };
 
   document
     .querySelectorAll(".selected")
     .forEach((el) => el.classList.remove("selected"));
+
   const searchInput = document.getElementById("filterSearchInput");
   if (searchInput) searchInput.value = "";
-  document.getElementById("filterCount").innerText = "(0)";
-  document.getElementById("currentFilter").innerText = "All Games";
+
+  // Safe Check Element
+  const filterCount = document.getElementById("filterCount");
+  if (filterCount) filterCount.innerText = "(0)";
+
+  const currentFilter = document.getElementById("currentFilter");
+  if (currentFilter) currentFilter.innerText = "All Games";
+
   applyFilters();
 };
 
 // =================================================
-// 4. LOAD GAME GRID
+// 4. LOAD GAME GRID & PAGINATION
 // =================================================
-window.loadGamesForBrowse = async function (
-  searchQuery = "",
-  genreFilter = ""
-) {
+window.loadMoreGames = function () {
+  activeFilters.page++;
+  loadGamesForBrowse(true);
+};
+
+window.loadGamesForBrowse = async function (isAppend = false) {
   const container = document.getElementById("browseContainer");
   const btnLoadMore = document.getElementById("btnLoadMore");
   if (!container) return;
-
-  // Reset jika filter baru
-  const isAppend =
-    searchQuery === "" && genreFilter === "" && activeFilters.page > 1;
 
   if (!isAppend) {
     container.innerHTML =
       '<p style="color:#777; grid-column:1/-1; text-align:center; padding:40px;">Loading games...</p>';
     if (btnLoadMore) btnLoadMore.style.display = "none";
-    if (searchQuery === "" && genreFilter === "") activeFilters.page = 1;
   } else {
     if (btnLoadMore) btnLoadMore.innerText = "Loading...";
   }
 
-  if (searchQuery) activeFilters.search = searchQuery;
-  if (genreFilter) activeFilters.genre = genreFilter;
-
-  // Susun Params
+  // Build Query Params
   let params = `page_size=20&page=${activeFilters.page}&ordering=${activeFilters.ordering}`;
-
   if (activeFilters.search) params += `&search=${activeFilters.search}`;
   if (activeFilters.genre) params += `&genres=${activeFilters.genre}`;
   if (activeFilters.platform) params += `&platforms=${activeFilters.platform}`;
   if (activeFilters.tags) params += `&tags=${activeFilters.tags}`;
   if (activeFilters.stores) params += `&stores=${activeFilters.stores}`;
+  if (activeFilters.publishers)
+    params += `&publishers=${activeFilters.publishers}`;
   if (activeFilters.developers)
     params += `&developers=${activeFilters.developers}`;
 
@@ -412,105 +418,58 @@ window.loadGamesForBrowse = async function (
   }
 };
 
-window.loadMoreGames = function () {
-  activeFilters.page++;
-  loadGamesForBrowse(false, false); // Trigger fetch dengan page baru
-  // Note: loadGamesForBrowse logic above handles append based on page > 1,
-  // but cleaner way is explicitly passing isAppend true.
-  // Let's rely on the internal logic or fix specific call:
-  // Update logic: Panggil fetch langsung
-  const container = document.getElementById("browseContainer");
-  const btnLoadMore = document.getElementById("btnLoadMore");
-  if (btnLoadMore) btnLoadMore.innerText = "Loading...";
+// Fungsi dipanggil dari Mega Menu Navbar
+window.filterFromMegaMenu = function (type, value, name) {
+  // 1. Reset dulu semua
+  resetFilters();
 
-  // Recursive call with implicit state
-  // To be safe, let's fix the logic inside loadGamesForBrowse to detect append mode better
-  // Or simpler:
-  // Just force redraw with current page state? No, we need append.
-  // Let's modify call slightly:
-  // We already updated activeFilters.page.
-  // Let's manually trigger fetch logic from inside loadGamesForBrowse.
-};
-
-// FIX LOGIC LOAD MORE DI ATAS AGAR LEBIH JELAS:
-// Ganti fungsi loadMoreGames dan loadGamesForBrowse dengan yang ini:
-
-window.loadMoreGames = function () {
-  activeFilters.page++;
-  loadGamesForBrowseHelper(true);
-};
-
-// Helper khusus agar bisa dipanggil internal
-async function loadGamesForBrowseHelper(isAppend = false) {
-  const container = document.getElementById("browseContainer");
-  const btnLoadMore = document.getElementById("btnLoadMore");
-
-  if (!isAppend) {
-    container.innerHTML =
-      '<p style="color:#777; grid-column:1/-1; text-align:center; padding:40px;">Loading games...</p>';
-    if (btnLoadMore) btnLoadMore.style.display = "none";
-    activeFilters.page = 1;
-  } else {
-    if (btnLoadMore) btnLoadMore.innerText = "Loading...";
-  }
-
-  let params = `page_size=20&page=${activeFilters.page}&ordering=${activeFilters.ordering}`;
-  if (activeFilters.search) params += `&search=${activeFilters.search}`;
-  if (activeFilters.genre) params += `&genres=${activeFilters.genre}`;
-  if (activeFilters.platform) params += `&platforms=${activeFilters.platform}`;
-  if (activeFilters.tags) params += `&tags=${activeFilters.tags}`;
-  if (activeFilters.stores) params += `&stores=${activeFilters.stores}`;
-  if (activeFilters.developers)
-    params += `&developers=${activeFilters.developers}`;
-
-  try {
-    const games = await fetchData("games", params);
-    if (!isAppend) container.innerHTML = "";
-
-    if (games && games.length > 0) {
-      games.forEach((game) => {
-        const tempDiv = document.createElement("div");
-        tempDiv.innerHTML = createGameCard(game);
-        container.appendChild(tempDiv.firstElementChild);
-      });
-      if (btnLoadMore) {
-        btnLoadMore.style.display = "inline-block";
-        btnLoadMore.innerText = "Load More";
-      }
-    } else {
-      if (!isAppend)
-        container.innerHTML =
-          "<p style='color:#ccc; grid-column:1/-1; text-align:center;'>No games found.</p>";
-      if (btnLoadMore) btnLoadMore.style.display = "none";
-    }
-  } catch (error) {
-    console.error("Error:", error);
-  }
-}
-
-// Override fungsi lama
-window.loadGamesForBrowse = async function (
-  searchQuery = "",
-  genreFilter = ""
-) {
-  if (searchQuery) activeFilters.search = searchQuery;
-  if (genreFilter) activeFilters.genre = genreFilter;
-  loadGamesForBrowseHelper(false);
-};
-
-window.filterByGenre = function (slug, name) {
+  // 2. Set Filter & Text
   const filterText = document.getElementById("currentFilter");
-  if (filterText) filterText.innerText = `Genre: ${name}`;
+  if (filterText) filterText.innerText = `${type}: ${name}`;
+
+  if (type === "Genre") {
+    activeFilters.genre = value;
+  } else if (type === "Platform") {
+    // Mapping ID manual
+    const platformMap = {
+      pc: 4,
+      playstation: 18,
+      xbox: 1,
+      ios: 3,
+      android: 21,
+      mac: 5,
+      linux: 6,
+      nintendo: 7,
+    };
+    const lowerName = name.toLowerCase();
+    let matchedID = 4; // default PC
+    for (const key in platformMap) {
+      if (lowerName.includes(key)) matchedID = platformMap[key];
+    }
+    activeFilters.platform = matchedID;
+  } else if (type === "Publisher") {
+    activeFilters.publishers = value;
+  }
+
+  // 3. Pindah ke Browse & Load
+  switchPage("view-browse");
   const gameArea = document.querySelector(".browse-content-area");
   if (gameArea) gameArea.scrollIntoView({ behavior: "smooth" });
-  loadGamesForBrowse("", slug);
+
+  loadGamesForBrowse();
+};
+
+// Shortcut untuk internal
+window.filterByGenre = function (slug, name) {
+  window.filterFromMegaMenu("Genre", slug, name);
 };
 
 // =================================================
-// 5. MAIN INIT
+// 5. MAIN INIT (ENTRY POINT)
 // =================================================
 window.loadBrowsePage = function () {
   console.log("📂 Load Browse Page...");
+
   initGenreSwiper();
   initFilterSidebar();
 

@@ -1,24 +1,17 @@
-/* assets/js/router.js - FIXED CALENDAR LOGIC */
+/* assets/js/router.js - FINAL CLEAN VERSION */
 
 // =================================================
 // 1. FUNGSI GANTI HALAMAN (CORE NAVIGATION)
 // =================================================
 window.switchPage = function (pageId) {
   console.log("Navigasi ke:", pageId);
-
-  // 1. Simpan halaman terakhir ke LocalStorage
   localStorage.setItem("activePage", pageId);
 
-  // 2. Update Style Tombol Navigasi
   document.querySelectorAll(".nav-tab").forEach((tab) => {
-    if (tab.dataset.target === pageId) {
-      tab.classList.add("active");
-    } else {
-      tab.classList.remove("active");
-    }
+    if (tab.dataset.target === pageId) tab.classList.add("active");
+    else tab.classList.remove("active");
   });
 
-  // 3. Show/Hide Section
   document.querySelectorAll(".page-section").forEach((section) => {
     if (section.id === pageId) {
       section.classList.add("active");
@@ -29,45 +22,29 @@ window.switchPage = function (pageId) {
     }
   });
 
-  // --- TRIGGER LOGIC PER HALAMAN ---
-
-  // A. BROWSE TAB
+  // TRIGGER LOAD LAZY PER PAGE
   if (pageId === "view-browse") {
-    if (typeof window.loadBrowsePage === "function") {
-      const container = document.getElementById("browseContainer");
-      const genreWrapper = document.getElementById("genreSwiperWrapper");
-
-      // Cek apakah konten masih kosong/loading
-      if (
-        (container && container.innerText.includes("Loading")) ||
-        (genreWrapper && genreWrapper.innerHTML.trim() === "")
-      ) {
-        window.loadBrowsePage();
-      }
+    const container = document.getElementById("browseContainer");
+    if (container && container.innerText.includes("Loading")) {
+      if (typeof window.loadBrowsePage === "function") window.loadBrowsePage();
     }
   }
 
-  // B. NEWS TAB
   if (pageId === "view-news") {
-    if (typeof window.loadNewsPage === "function") {
-      const newsContainer = document.getElementById("newsFeed");
-      // Cek apakah masih ada skeleton loader
-      if (
-        newsContainer &&
-        (newsContainer.innerHTML.trim() === "" ||
-          newsContainer.querySelector(".skeleton-news-item"))
-      ) {
-        window.loadNewsPage();
-      }
+    const newsContainer = document.getElementById("newsFeed");
+    if (newsContainer && newsContainer.querySelector(".skeleton-news-item")) {
+      if (typeof window.loadNewsPage === "function") window.loadNewsPage();
     }
   }
 
-  // C. CALENDAR TAB (PERBAIKAN DISINI)
+  // C. CALENDAR TAB (FIXED LOGIC)
   if (pageId === "view-calendar") {
     if (typeof window.loadCalendarPage === "function") {
       const calendarGrid = document.getElementById("calendarGrid");
 
-      // Cek apakah sudah ada kartu game? Jika belum, berarti belum load.
+      // LOGIKA BARU:
+      // Cek apakah di dalamnya sudah ada kartu game (.store-card)?
+      // Jika TIDAK ADA kartu, berarti kita harus load datanya.
       const hasGames =
         calendarGrid && calendarGrid.querySelector(".store-card");
 
@@ -75,34 +52,47 @@ window.switchPage = function (pageId) {
         window.loadCalendarPage();
       }
     } else {
-      console.error("❌ Fungsi loadCalendarPage belum dimuat! Cek calendar.js");
+      console.error("Fungsi loadCalendarPage belum dimuat! Cek calendar.js");
     }
   }
 
-  // D. COMMUNITY TAB
-  if (pageId === "view-community") {
-    if (typeof window.loadCommunityPage === "function") {
-      const masonry = document.getElementById("communityMasonry");
-      if (
-        masonry &&
-        (masonry.innerHTML.trim() === "" ||
-          masonry.querySelector(".skeleton-masonry"))
-      ) {
-        window.loadCommunityPage();
-      }
-    }
-  }
-
-  // E. MY LIBRARY TAB
   if (pageId === "view-collection") {
-    if (typeof window.loadCollectionPage === "function") {
+    if (typeof window.loadCollectionPage === "function")
       window.loadCollectionPage();
+  }
+
+  if (pageId === "view-community") {
+    const masonry = document.getElementById("communityMasonry");
+    if (masonry && masonry.querySelector(".skeleton-masonry")) {
+      if (typeof window.loadCommunityPage === "function")
+        window.loadCommunityPage();
     }
   }
 };
 
 // =================================================
-// 2. LIVE SEARCH SYSTEM
+// 2. BUKA HALAMAN DETAIL (DIPANGGIL DARI ONCLICK CARD)
+// =================================================
+window.openGameDetail = function (gameId) {
+  console.log("Router: Membuka detail ID", gameId);
+
+  // 1. Pindah Halaman
+  switchPage("view-detail");
+  window.scrollTo(0, 0);
+
+  // 2. Delegasikan ke detail.js
+  if (typeof window.loadDetailData === "function") {
+    window.loadDetailData(gameId);
+  } else {
+    console.error(
+      "❌ detail.js belum dimuat! Pastikan script ada di index.html"
+    );
+    alert("Gagal memuat detail.js");
+  }
+};
+
+// =================================================
+// 3. SEARCH SYSTEM
 // =================================================
 function debounce(func, wait) {
   let timeout;
@@ -118,7 +108,8 @@ function renderDropdown(games, query, dropdown) {
     const div = document.createElement("div");
     div.className = "search-result-item";
     div.onclick = () => {
-      if (typeof openGameDetail === "function") openGameDetail(game.id);
+      if (typeof window.openGameDetail === "function")
+        window.openGameDetail(game.id);
       dropdown.style.display = "none";
       document.getElementById("globalSearch").value = "";
     };
@@ -126,51 +117,8 @@ function renderDropdown(games, query, dropdown) {
     div.innerHTML = `<img src="${img}"><div class="item-info"><span class="item-title">${game.name}</span><span class="item-type">Base Game</span></div>`;
     dropdown.appendChild(div);
   });
-
-  const viewAll = document.createElement("div");
-  viewAll.className = "view-all-link";
-  viewAll.innerHTML = `View all results for "${query}" <i class="bi bi-arrow-right"></i>`;
-  viewAll.onclick = (e) => {
-    e.preventDefault();
-    dropdown.style.display = "none";
-    switchPage("view-browse");
-    const filterTitle = document.getElementById("currentFilter");
-    if (filterTitle) filterTitle.innerText = `Search: ${query}`;
-    if (typeof loadGamesForBrowse === "function") loadGamesForBrowse(query);
-  };
-  dropdown.appendChild(viewAll);
 }
 
-// =================================================
-// 3. HALAMAN DETAIL GAME
-// =================================================
-// =================================================
-// 3. HALAMAN DETAIL GAME (DELEGASI BERSIH)
-// =================================================
-window.openGameDetail = function (gameId) {
-  console.log("Router: Membuka detail ID", gameId);
-
-  // 1. Pindah Halaman & Scroll Top
-  switchPage("view-detail");
-  window.scrollTo(0, 0);
-
-  // 2. Panggil Logic Detail dari file detail.js
-  // Kita TIDAK mengubah innerText disini untuk mencegah error null
-  if (typeof window.loadDetailData === "function") {
-    window.loadDetailData(gameId);
-  } else {
-    console.error(
-      "❌ detail.js belum dimuat! Pastikan script ada di index.html"
-    );
-    // Fallback aman jika detail.js belum load
-    const title = document.getElementById("detailTitle");
-    if (title) title.innerText = "Error: Script detail.js missing";
-  }
-};
-
-// =================================================
-// 4. MAIN INIT
-// =================================================
 function initRouter() {
   console.log("✅ Router System Ready");
 
@@ -193,6 +141,7 @@ function initRouter() {
           dropdown.style.display = "none";
           return;
         }
+
         dropdown.style.display = "block";
         dropdown.innerHTML = `<div style="padding:15px; color:#aaa;">Searching...</div>`;
 
@@ -215,10 +164,8 @@ function initRouter() {
       if (e.key === "Enter") {
         dropdown.style.display = "none";
         switchPage("view-browse");
-        const filter = document.getElementById("currentFilter");
-        if (filter) filter.innerText = `Search: ${searchInput.value}`;
-        if (typeof loadGamesForBrowse === "function")
-          loadGamesForBrowse(searchInput.value);
+        if (typeof window.loadGamesForBrowse === "function")
+          window.loadGamesForBrowse(searchInput.value);
       }
     });
   }
