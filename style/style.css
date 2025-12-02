@@ -3531,6 +3531,57 @@ body::-webkit-scrollbar {
        Sticky butuh elemennya lebih pendek dari containernya agar bisa "jalan". */
     align-items: start;
   }
+
+  .genre-card {
+    height: 130px !important; /* Lebih pendek */
+    padding-bottom: 10px !important;
+  }
+
+  /* 2. Atur Ulang Posisi Wrapper Gambar */
+  .genre-img-wrap {
+    top: 15px !important;
+    height: 70px !important;
+  }
+
+  /* 3. Kecilkan Gambar Utama */
+  .genre-img-wrap img {
+    width: 50px !important; /* Kecilkan dari 70px */
+    height: 70px !important; /* Kecilkan dari 95px */
+    border-radius: 3px !important;
+  }
+
+  /* 4. Kecilkan & Rapatkan Kartu Tumpukan (Belakang) */
+  .genre-img-wrap::before,
+  .genre-img-wrap::after {
+    width: 45px !important;
+    height: 65px !important;
+    border-radius: 3px !important;
+  }
+
+  /* Geser lebih rapat agar tidak keluar kartu */
+  .genre-img-wrap::before {
+    transform: translateX(-110%) rotate(-5deg) !important; /* Geser kiri dikit */
+  }
+
+  .genre-img-wrap::after {
+    transform: translateX(10%) rotate(5deg) !important; /* Geser kanan dikit */
+  }
+
+  /* 5. Kecilkan Font Judul */
+  .genre-card h3 {
+    font-size: 11px !important;
+    margin-bottom: 5px !important;
+  }
+
+  /* 6. Hapus efek hover berlebihan di HP (biar ga glitch saat scroll) */
+  .genre-card:hover {
+    transform: none !important;
+  }
+
+  .browse-genre-section .swiper-slide {
+    width: 45% !important; /* Contoh: Set lebar manual agar Swiper menghitungnya */
+    flex-shrink: 0 !important; /* Jangan biarkan slide menyusut */
+  }
 }
 
 /* --- LAYAR SANGAT KECIL (iPhone SE / SEjenisnya) --- */

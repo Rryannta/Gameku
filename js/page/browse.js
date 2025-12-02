@@ -70,10 +70,14 @@ const filterConfig = [
 // =================================================
 // 1. GENRE CAROUSEL (STACK EFFECT)
 // =================================================
+// =================================================
+// 1. GENRE CAROUSEL (STACK EFFECT) - FIXED ROBUSTNESS
+// =================================================
 async function initGenreSwiper() {
   const container = document.getElementById("genreSwiperWrapper");
   if (!container) return;
 
+  // Fetch Genre List
   const genres = await fetchData(
     "genres",
     "ordering=-games_count&page_size=10"
@@ -90,6 +94,7 @@ async function initGenreSwiper() {
     const defaultImg =
       genre.image_background || "https://placehold.co/70x95/333/ccc";
 
+    // Pastikan style CSS variables sudah disematkan
     slide.innerHTML = `
             <div class="genre-card" id="${cardId}" style="--bg-left: url(''); --bg-right: url('');">
                 <div class="genre-img-wrap">
@@ -102,10 +107,19 @@ async function initGenreSwiper() {
     updateGenreCardImages(genre.slug, cardId);
   });
 
+  // --- INISIALISASI SWIPER (FIXED) ---
   if (typeof Swiper !== "undefined") {
-    new Swiper(".myGenreSwiper", {
+    // Hancurkan Swiper lama jika ada (pencegahan)
+    if (window.genreSwiperInstance) {
+      window.genreSwiperInstance.destroy(true, true);
+    }
+
+    // PENTING: Tambahkan observer dan observeParents
+    window.genreSwiperInstance = new Swiper(".myGenreSwiper", {
       slidesPerView: 2,
       spaceBetween: 15,
+      observer: true,
+      observeParents: true, // AKTIFKAN AUTO-FIX LAYOUT
       navigation: {
         nextEl: ".nav-btn-next-genre",
         prevEl: ".nav-btn-prev-genre",
