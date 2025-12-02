@@ -6,7 +6,7 @@ Gameku adalah proyek aplikasi web katalog atau portofolio sederhana yang dibangu
 
 Anda dapat mengakses dan mencoba versi aplikasi yang sudah di-deploy melalui tautan berikut:
 
-gameku-omega.vercel.app
+<a href="gameku-omega.vercel.app">gameku-omega.vercel.app<a>
 
 ✨ Teknologi yang Digunakan
 
