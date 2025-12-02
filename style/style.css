@@ -3582,6 +3582,39 @@ body::-webkit-scrollbar {
     width: 45% !important; /* Contoh: Set lebar manual agar Swiper menghitungnya */
     flex-shrink: 0 !important; /* Jangan biarkan slide menyusut */
   }
+
+  /* 1. CONTAINER TOP CHARTS */
+  .top-charts-section {
+    padding-bottom: 25px; /* Kurangi padding bawah agar tidak terlalu jauh ke grid */
+    overflow: hidden; /* Penting untuk memotong bayangan yang tidak perlu */
+    width: 100%;
+  }
+
+  /* 2. HEADER TABS (Agar tidak memanjang) */
+  .top-header-row {
+    flex-wrap: wrap;
+    gap: 15px;
+  }
+
+  /* 3. SWIPER SLIDES (PAKSA UKURAN RATA) */
+  .myTopChartSwiper .swiper-wrapper {
+    box-sizing: border-box;
+    padding-bottom: 15px;
+  }
+
+  /* Di Mobile, tampilkan 2 kartu, masing-masing 50% */
+  .myTopChartSwiper .swiper-slide {
+    width: 50% !important; /* WAJIB: Pastikan setiap slide 50% */
+    flex-shrink: 0 !important; /* Jangan biarkan slide menyusut */
+    box-sizing: border-box;
+  }
+
+  /* 4. TOMBOL PANAH (Agar tidak besar) */
+  .top-header-row .chart-nav-btns button {
+    width: 28px;
+    height: 28px;
+    font-size: 14px;
+  }
 }
 
 /* --- LAYAR SANGAT KECIL (iPhone SE / SEjenisnya) --- */
