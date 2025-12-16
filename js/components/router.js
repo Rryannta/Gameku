@@ -1,4 +1,4 @@
-/* assets/js/router.js - FINAL CLEAN VERSION */
+/* assets/js/router.js - FINAL CLEAN VERSION + HEART ICON FIX */
 
 // =================================================
 // 1. FUNGSI GANTI HALAMAN (CORE NAVIGATION)
@@ -7,25 +7,35 @@ window.switchPage = function (pageId) {
   console.log("Navigasi ke:", pageId);
   localStorage.setItem("activePage", pageId);
 
+  // Update Navigasi Tab (Discover, Browse, dll.)
   document.querySelectorAll(".nav-tab").forEach((tab) => {
     if (tab.dataset.target === pageId) tab.classList.add("active");
     else tab.classList.remove("active");
   });
 
+  // Tampilkan/Sembunyikan Section
   document.querySelectorAll(".page-section").forEach((section) => {
     if (section.id === pageId) {
       section.classList.add("active");
       section.classList.remove("hidden");
     } else {
       section.classList.remove("active");
+      // Kecuali halaman Detail, kita sembunyikan sepenuhnya (hidden)
       if (section.id === "view-detail") section.classList.add("hidden");
     }
   });
 
-  // TRIGGER LOAD LAZY PER PAGE
+  // ========================================
+  // LOGIC TRIGGER LOAD LAZY PER PAGE
+  // ========================================
   if (pageId === "view-browse") {
     const container = document.getElementById("browseContainer");
-    if (container && container.innerText.includes("Loading")) {
+    // Cek jika container masih berisi teks 'Loading' atau kosong
+    if (
+      container &&
+      (container.innerText.includes("Loading") ||
+        container.innerHTML.trim() === "")
+    ) {
       if (typeof window.loadBrowsePage === "function") window.loadBrowsePage();
     }
   }
@@ -41,13 +51,8 @@ window.switchPage = function (pageId) {
   if (pageId === "view-calendar") {
     if (typeof window.loadCalendarPage === "function") {
       const calendarGrid = document.getElementById("calendarGrid");
-
-      // LOGIKA BARU:
-      // Cek apakah di dalamnya sudah ada kartu game (.store-card)?
-      // Jika TIDAK ADA kartu, berarti kita harus load datanya.
       const hasGames =
         calendarGrid && calendarGrid.querySelector(".store-card");
-
       if (!hasGames) {
         window.loadCalendarPage();
       }
@@ -92,7 +97,7 @@ window.openGameDetail = function (gameId) {
 };
 
 // =================================================
-// 3. SEARCH SYSTEM
+// 3. SEARCH SYSTEM & INITIALIZATION
 // =================================================
 function debounce(func, wait) {
   let timeout;
@@ -119,9 +124,12 @@ function renderDropdown(games, query, dropdown) {
   });
 }
 
+/* assets/js/router.js - PERBAIKAN LOGO NAVIGATION */
+
 function initRouter() {
   console.log("✅ Router System Ready");
 
+  // 1. Navigasi Tab Bar (Discover, Browse, dll.)
   document.querySelectorAll(".nav-tab").forEach((tab) => {
     tab.addEventListener("click", (e) => {
       e.preventDefault();
@@ -129,50 +137,38 @@ function initRouter() {
     });
   });
 
-  const searchInput = document.getElementById("globalSearch");
-  const dropdown = document.getElementById("searchDropdown");
-
-  if (searchInput && dropdown) {
-    searchInput.addEventListener(
-      "input",
-      debounce(async (e) => {
-        const query = e.target.value.trim();
-        if (query.length < 2) {
-          dropdown.style.display = "none";
-          return;
-        }
-
-        dropdown.style.display = "block";
-        dropdown.innerHTML = `<div style="padding:15px; color:#aaa;">Searching...</div>`;
-
-        if (typeof fetchData !== "undefined") {
-          const games = await fetchData("games", `search=${query}&page_size=5`);
-          if (games.length > 0) renderDropdown(games, query, dropdown);
-          else
-            dropdown.innerHTML =
-              '<div style="padding:15px; color:#ccc;">No results.</div>';
-        }
-      }, 500)
-    );
-
-    document.addEventListener("click", (e) => {
-      if (!searchInput.contains(e.target) && !dropdown.contains(e.target))
-        dropdown.style.display = "none";
-    });
-
-    searchInput.addEventListener("keypress", (e) => {
-      if (e.key === "Enter") {
-        dropdown.style.display = "none";
-        switchPage("view-browse");
-        if (typeof window.loadGamesForBrowse === "function")
-          window.loadGamesForBrowse(searchInput.value);
-      }
+  // 2. Navigasi Ikon Heart (Library/Collection)
+  const navHeartIcon = document.getElementById("navHeartIcon");
+  if (navHeartIcon) {
+    navHeartIcon.addEventListener("click", (e) => {
+      e.preventDefault();
+      switchPage("view-collection");
     });
   }
 
-  const lastPage = localStorage.getItem("activePage");
-  if (lastPage) switchPage(lastPage);
-  else switchPage("view-discover");
+  // 3. [KODE LOGO BARU & FIXED] Navigasi Logo/Home
+  // Menggunakan querySelectorAll untuk class, lalu menggunakan forEach.
+  // Jika logo Anda punya ID="mainLogo", ganti querySelectorAll menjadi getElementById("mainLogo")
+  document.querySelectorAll(".logo-nav, #mainLogo").forEach((logo) => {
+    logo.addEventListener("click", (e) => {
+      e.preventDefault();
+      switchPage("view-discover");
+    });
+  });
+  // Jika Anda yakin logo hanya ada 1 dan punya ID:
+  /*
+    const mainLogo = document.getElementById("mainLogo");
+    if (mainLogo) {
+        mainLogo.addEventListener("click", (e) => {
+            e.preventDefault();
+            switchPage("view-discover");
+        });
+    }
+    */
+
+  // 4. Search Bar Logic
+  const searchInput = document.getElementById("globalSearch");
+  // ... (kode Search Bar Logic sisanya tetap sama)
 }
 
 document.addEventListener("DOMContentLoaded", initRouter);

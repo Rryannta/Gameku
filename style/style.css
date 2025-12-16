@@ -235,6 +235,7 @@ body::-webkit-scrollbar {
 
   .right {
     .nav-icon-link i {
+      display: none;
       font-size: 20px;
       color: #ccc;
       cursor: pointer;
@@ -242,6 +243,10 @@ body::-webkit-scrollbar {
       &:hover {
         color: #fff;
       }
+    }
+
+    #wishlistCount {
+      display: none !important;
     }
   }
 }
@@ -3178,6 +3183,16 @@ body::-webkit-scrollbar {
     height: 60px; /* Tinggi fix biar rapi */
     padding: 0 15px;
     flex-wrap: nowrap; /* Jangan turun baris */
+
+    &.custom {
+      padding: 20px 20px;
+    }
+
+    .right {
+      .nav-icon-link i {
+        display: flex;
+      }
+    }
   }
 
   .bi-chevron-down {
@@ -3614,6 +3629,10 @@ body::-webkit-scrollbar {
     width: 28px;
     height: 28px;
     font-size: 14px;
+  }
+
+  #wishlistCount {
+    display: none !important;
   }
 }
 

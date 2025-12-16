@@ -125,7 +125,7 @@ function startHeroTimer() {
     let nextIndex = currentHeroIndex + 1;
     if (nextIndex >= heroGames.length) nextIndex = 0;
     updateHeroStage(nextIndex);
-  }, 5000);
+  }, 9000);
 }
 
 // ==========================================================
